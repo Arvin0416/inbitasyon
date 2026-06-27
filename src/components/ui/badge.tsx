@@ -7,14 +7,12 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-rosegold-100 text-rosegold-700",
-        sage: "bg-sage-100 text-sage-700",
-        navy: "bg-navy-100 text-navy-700",
+        default: "bg-olive-100 text-olive-800",
+        olive: "bg-olive-600 text-white",
         gold: "bg-gold-100 text-gold-800",
-        warm: "bg-warm-100 text-warm-700",
-        mauve: "bg-mauve-100 text-mauve-700",
+        cream: "bg-cream-100 text-charcoal-700",
         green: "bg-green-100 text-green-700",
-        outline: "border border-warm-200 text-warm-600",
+        outline: "border border-olive-200 text-charcoal-500",
       },
     },
     defaultVariants: {

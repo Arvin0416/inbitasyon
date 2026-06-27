@@ -9,11 +9,11 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-warm-200/60 bg-white/90 backdrop-blur-lg">
+    <header className="sticky top-0 z-50 w-full border-b border-olive-200/60 bg-white/90 backdrop-blur-lg">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2 group">
-          <Heart className="h-6 w-6 text-rosegold-500 transition-transform group-hover:scale-110" />
-          <span className="text-xl font-serif font-semibold tracking-tight text-navy-800">
+          <Heart className="h-6 w-6 text-olive-600 transition-transform group-hover:scale-110" />
+          <span className="text-xl font-serif font-semibold tracking-tight text-olive-800">
             Invitasyon
           </span>
         </Link>
@@ -21,19 +21,19 @@ export function Header() {
         <nav className="hidden md:flex items-center gap-8">
           <Link
             href="/gallery"
-            className="text-sm font-medium text-warm-600 hover:text-rosegold-600 transition-colors"
+            className="text-sm font-medium text-charcoal-500 hover:text-olive-700 transition-colors"
           >
             Designs
           </Link>
           <Link
             href="/#how-it-works"
-            className="text-sm font-medium text-warm-600 hover:text-rosegold-600 transition-colors"
+            className="text-sm font-medium text-charcoal-500 hover:text-olive-700 transition-colors"
           >
             How It Works
           </Link>
           <Link
             href="/#pricing"
-            className="text-sm font-medium text-warm-600 hover:text-rosegold-600 transition-colors"
+            className="text-sm font-medium text-charcoal-500 hover:text-olive-700 transition-colors"
           >
             Pricing
           </Link>
@@ -45,7 +45,7 @@ export function Header() {
         </nav>
 
         <button
-          className="md:hidden p-2 text-warm-600"
+          className="md:hidden p-2 text-charcoal-500"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
@@ -54,24 +54,24 @@ export function Header() {
       </div>
 
       {mobileOpen && (
-        <div className="md:hidden border-t border-warm-200/60 bg-white px-4 py-4 space-y-3">
+        <div className="md:hidden border-t border-olive-200/60 bg-white px-4 py-4 space-y-3">
           <Link
             href="/gallery"
-            className="block py-2 text-sm font-medium text-warm-600 hover:text-rosegold-600"
+            className="block py-2 text-sm font-medium text-charcoal-500 hover:text-olive-700"
             onClick={() => setMobileOpen(false)}
           >
             Designs
           </Link>
           <Link
             href="/#how-it-works"
-            className="block py-2 text-sm font-medium text-warm-600 hover:text-rosegold-600"
+            className="block py-2 text-sm font-medium text-charcoal-500 hover:text-olive-700"
             onClick={() => setMobileOpen(false)}
           >
             How It Works
           </Link>
           <Link
             href="/#pricing"
-            className="block py-2 text-sm font-medium text-warm-600 hover:text-rosegold-600"
+            className="block py-2 text-sm font-medium text-charcoal-500 hover:text-olive-700"
             onClick={() => setMobileOpen(false)}
           >
             Pricing

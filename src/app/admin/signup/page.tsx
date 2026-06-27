@@ -53,16 +53,16 @@ function SignUpForm() {
 
   if (confirmSent) {
     return (
-      <div className="flex items-center justify-center min-h-[80vh] px-4 bg-gradient-romantic">
+      <div className="flex items-center justify-center min-h-screen px-4 bg-gradient-romantic">
         <Card className="max-w-md w-full">
           <CardContent className="p-8 text-center">
-            <div className="w-16 h-16 rounded-full bg-sage-100 flex items-center justify-center mx-auto mb-6">
-              <UserPlus className="w-8 h-8 text-sage-600" />
+            <div className="w-16 h-16 rounded-full bg-olive-100 flex items-center justify-center mx-auto mb-6">
+              <UserPlus className="w-8 h-8 text-olive-600" />
             </div>
-            <h2 className="text-xl font-semibold text-navy-800 mb-2">
+            <h2 className="text-xl font-semibold text-olive-800 mb-2">
               Check your email
             </h2>
-            <p className="text-sm text-warm-500 mb-6">
+            <p className="text-sm text-charcoal-500 mb-6">
               We sent a confirmation link to <strong>{email}</strong>. Click the
               link to verify your account, then sign in.
             </p>
@@ -76,12 +76,12 @@ function SignUpForm() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-[80vh] px-4 bg-gradient-romantic">
+    <div className="flex items-center justify-center min-h-screen px-4 bg-gradient-romantic">
       <Card className="max-w-md w-full">
         <CardHeader className="text-center">
-          <Shield className="w-10 h-10 text-navy-700 mx-auto mb-2" />
-          <CardTitle className="text-xl">Create Admin Account</CardTitle>
-          <p className="text-sm text-warm-500 mt-1">
+          <Shield className="w-10 h-10 text-olive-700 mx-auto mb-2" />
+          <CardTitle className="text-xl text-olive-800">Create Admin Account</CardTitle>
+          <p className="text-sm text-charcoal-500 mt-1">
             Sign up to manage Invitasyon
           </p>
         </CardHeader>
@@ -113,7 +113,7 @@ function SignUpForm() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-warm-400 hover:text-warm-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-charcoal-400 hover:text-charcoal-600"
                 >
                   {showPassword ? (
                     <EyeOff className="w-4 h-4" />
@@ -136,7 +136,7 @@ function SignUpForm() {
             </div>
             <Button
               type="submit"
-              variant="navy"
+              variant="olive"
               size="lg"
               className="w-full"
               disabled={isLoading}
@@ -157,7 +157,7 @@ function SignUpForm() {
           <div className="mt-4 text-center">
             <Link
               href="/admin/login"
-              className="inline-flex items-center gap-1 text-sm text-rosegold-600 hover:underline"
+              className="inline-flex items-center gap-1 text-sm text-olive-600 hover:underline"
             >
               <ArrowLeft className="w-3 h-3" />
               Back to Sign In

@@ -38,12 +38,12 @@ function LoginForm() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[80vh] px-4 bg-gradient-romantic">
+    <div className="flex items-center justify-center min-h-screen px-4 bg-gradient-romantic">
       <Card className="max-w-md w-full">
         <CardHeader className="text-center">
-          <Shield className="w-10 h-10 text-navy-700 mx-auto mb-2" />
-          <CardTitle className="text-xl">Admin Login</CardTitle>
-          <p className="text-sm text-warm-500 mt-1">
+          <Shield className="w-10 h-10 text-olive-700 mx-auto mb-2" />
+          <CardTitle className="text-xl text-olive-800">Admin Login</CardTitle>
+          <p className="text-sm text-charcoal-500 mt-1">
             Sign in to manage Invitasyon
           </p>
         </CardHeader>
@@ -74,7 +74,7 @@ function LoginForm() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-warm-400 hover:text-warm-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-charcoal-400 hover:text-charcoal-600"
                 >
                   {showPassword ? (
                     <EyeOff className="w-4 h-4" />
@@ -86,7 +86,7 @@ function LoginForm() {
             </div>
             <Button
               type="submit"
-              variant="navy"
+              variant="olive"
               size="lg"
               className="w-full"
               disabled={isLoading}
@@ -107,7 +107,7 @@ function LoginForm() {
           <div className="mt-4 text-center space-y-2">
             <Link
               href="/admin/signup"
-              className="text-sm text-rosegold-600 hover:underline"
+              className="text-sm text-olive-600 hover:underline"
             >
               Create an account
             </Link>
