@@ -152,17 +152,17 @@ function OrderFormContent() {
       <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 py-16">
         <Card className="max-w-lg w-full text-center">
           <CardContent className="p-8 sm:p-12">
-            <div className="w-16 h-16 rounded-full bg-sage-100 flex items-center justify-center mx-auto mb-6">
-              <CheckCircle2 className="w-8 h-8 text-sage-600" />
+            <div className="w-16 h-16 rounded-full bg-olive-100 flex items-center justify-center mx-auto mb-6">
+              <CheckCircle2 className="w-8 h-8 text-olive-600" />
             </div>
-            <h2 className="font-serif text-2xl font-bold text-navy-800 mb-2">
+            <h2 className="font-serif text-2xl font-bold text-olive-800 mb-2">
               Your wedding website is ready!
             </h2>
-            <p className="text-warm-500 mb-6">
+            <p className="text-charcoal-500 mb-6">
               Share this link with your guests:
             </p>
-            <div className="bg-warm-50 rounded-xl p-4 mb-6">
-              <p className="text-lg font-medium text-navy-800 break-all">
+            <div className="bg-olive-50 rounded-xl p-4 mb-6">
+              <p className="text-lg font-medium text-olive-800 break-all">
                 invitasyon.com/{generatedSlug}
               </p>
             </div>
@@ -197,16 +197,16 @@ function OrderFormContent() {
         <div className="mx-auto max-w-3xl">
           <Link
             href="/gallery"
-            className="inline-flex items-center gap-1 text-sm text-warm-500 hover:text-rosegold-600 transition-colors mb-6"
+            className="inline-flex items-center gap-1 text-sm text-charcoal-500 hover:text-olive-700 transition-colors mb-6"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Gallery
           </Link>
 
-          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-navy-800 mb-2">
+          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-olive-800 mb-2">
             Create your wedding website
           </h1>
-          <p className="text-warm-500">
+          <p className="text-charcoal-500">
             Fill in your details and get your personal invitation website.
           </p>
         </div>
@@ -222,15 +222,15 @@ function OrderFormContent() {
                   <div
                     className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300 ${
                       i <= step
-                        ? "bg-rosegold-500 text-white shadow-md shadow-rosegold-200"
-                        : "bg-warm-100 text-warm-400"
+                        ? "bg-olive-600 text-white shadow-md shadow-olive-600/20"
+                        : "bg-olive-100 text-charcoal-400"
                     }`}
                   >
                     {i < step ? <CheckCircle2 className="w-5 h-5" /> : i + 1}
                   </div>
                   <span
                     className={`text-xs mt-1.5 hidden sm:block ${
-                      i <= step ? "text-rosegold-600 font-medium" : "text-warm-400"
+                      i <= step ? "text-olive-600 font-medium" : "text-charcoal-400"
                     }`}
                   >
                     {s}
@@ -239,7 +239,7 @@ function OrderFormContent() {
                 {i < STEPS.length - 1 && (
                   <div
                     className={`w-12 sm:w-20 h-0.5 mx-2 ${
-                      i < step ? "bg-rosegold-300" : "bg-warm-200"
+                      i < step ? "bg-olive-400" : "bg-olive-200"
                     }`}
                   />
                 )}
@@ -253,11 +253,11 @@ function OrderFormContent() {
               {step === 0 && (
                 <div className="space-y-6">
                   <div className="text-center mb-6">
-                    <Heart className="w-8 h-8 text-rosegold-500 mx-auto mb-2" />
-                    <h2 className="text-xl font-semibold text-navy-800">
+                    <Heart className="w-8 h-8 text-olive-600 mx-auto mb-2" />
+                    <h2 className="text-xl font-semibold text-olive-800">
                       Tell us about yourselves
                     </h2>
-                    <p className="text-sm text-warm-500">
+                    <p className="text-sm text-charcoal-500">
                       Who&apos;s tying the knot?
                     </p>
                   </div>
@@ -300,10 +300,10 @@ function OrderFormContent() {
               {step === 1 && (
                 <div className="space-y-6">
                   <div className="text-center mb-6">
-                    <h2 className="text-xl font-semibold text-navy-800">
+                    <h2 className="text-xl font-semibold text-olive-800">
                       Wedding details
                     </h2>
-                    <p className="text-sm text-warm-500">
+                    <p className="text-sm text-charcoal-500">
                       When and where is the big day?
                     </p>
                   </div>
@@ -355,10 +355,10 @@ function OrderFormContent() {
               {step === 2 && (
                 <div className="space-y-6">
                   <div className="text-center mb-6">
-                    <h2 className="text-xl font-semibold text-navy-800">
+                    <h2 className="text-xl font-semibold text-olive-800">
                       Design & style
                     </h2>
-                    <p className="text-sm text-warm-500">
+                    <p className="text-sm text-charcoal-500">
                       Choose your template and colors
                     </p>
                   </div>
@@ -400,8 +400,8 @@ function OrderFormContent() {
                           }
                           className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all duration-200 ${
                             formData.colorPalette === palette.name
-                              ? "border-rosegold-400 bg-rosegold-50"
-                              : "border-warm-200 hover:border-warm-300"
+                              ? "border-olive-400 bg-olive-50"
+                              : "border-olive-200 hover:border-olive-300"
                           }`}
                         >
                           <div className="flex -space-x-2">
@@ -418,7 +418,7 @@ function OrderFormContent() {
                               style={{ backgroundColor: palette.accent }}
                             />
                           </div>
-                          <span className="text-sm font-medium text-navy-700">
+                          <span className="text-sm font-medium text-olive-700">
                             {palette.name}
                           </span>
                         </button>
@@ -438,8 +438,8 @@ function OrderFormContent() {
 
                   <div className="space-y-2">
                     <Label>Your wedding URL</Label>
-                    <div className="flex items-center gap-2 p-3 bg-warm-50 rounded-xl">
-                      <span className="text-sm text-warm-500 shrink-0">
+                    <div className="flex items-center gap-2 p-3 bg-olive-50 rounded-xl">
+                      <span className="text-sm text-charcoal-500 shrink-0">
                         invitasyon.com/
                       </span>
                       <input
@@ -447,10 +447,10 @@ function OrderFormContent() {
                         value={formData.slug}
                         onChange={(e) => handleSlugChange(e.target.value)}
                         placeholder="arvin-angel"
-                        className="flex-1 bg-transparent border-none outline-none text-sm font-medium text-navy-800 placeholder:text-warm-300"
+                        className="flex-1 bg-transparent border-none outline-none text-sm font-medium text-olive-800 placeholder:text-charcoal-300"
                       />
                     </div>
-                    <p className="text-xs text-warm-400">
+                    <p className="text-xs text-charcoal-400">
                       Use lowercase letters, numbers, and hyphens only.
                     </p>
                   </div>
@@ -461,11 +461,11 @@ function OrderFormContent() {
               {step === 3 && (
                 <div className="space-y-6">
                   <div className="text-center mb-6">
-                    <Lock className="w-8 h-8 text-sage-500 mx-auto mb-2" />
-                    <h2 className="text-xl font-semibold text-navy-800">
+                    <Lock className="w-8 h-8 text-olive-600 mx-auto mb-2" />
+                    <h2 className="text-xl font-semibold text-olive-800">
                       Choose your plan
                     </h2>
-                    <p className="text-sm text-warm-500">
+                    <p className="text-sm text-charcoal-500">
                       One-time payment. Your website stays live forever.
                     </p>
                   </div>
@@ -479,25 +479,25 @@ function OrderFormContent() {
                           onClick={() => setTier(key)}
                           className={`relative p-6 rounded-xl border-2 text-left transition-all duration-200 ${
                             tier === key
-                              ? "border-rosegold-400 bg-rosegold-50 ring-1 ring-rosegold-300"
-                              : "border-warm-200 hover:border-warm-300"
+                              ? "border-olive-400 bg-olive-50 ring-1 ring-olive-300"
+                              : "border-olive-200 hover:border-olive-300"
                           }`}
                         >
                           {key === "self-serve" && (
-                            <span className="absolute top-3 right-3 text-[10px] font-medium text-rosegold-600 bg-rosegold-100 px-2 py-0.5 rounded-full">
+                            <span className="absolute top-3 right-3 text-[10px] font-medium text-olive-600 bg-olive-100 px-2 py-0.5 rounded-full">
                               Popular
                             </span>
                           )}
-                          <h3 className="font-semibold text-navy-800">
+                          <h3 className="font-semibold text-olive-800">
                             {plan.label}
                           </h3>
-                          <p className="text-2xl font-bold text-navy-800 mt-2">
+                          <p className="text-2xl font-bold text-olive-800 mt-2">
                             ${plan.price}
-                            <span className="text-sm font-normal text-warm-500 ml-1">
+                            <span className="text-sm font-normal text-charcoal-500 ml-1">
                               one-time
                             </span>
                           </p>
-                          <p className="text-sm text-warm-500 mt-2">
+                          <p className="text-sm text-charcoal-500 mt-2">
                             {plan.description}
                           </p>
                         </button>
@@ -505,22 +505,22 @@ function OrderFormContent() {
                     )}
                   </div>
 
-                  <div className="bg-warm-50 rounded-xl p-4 space-y-2">
+                  <div className="bg-olive-50 rounded-xl p-4 space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span className="text-warm-600">Subtotal</span>
-                      <span className="font-medium text-navy-800">
+                      <span className="text-charcoal-600">Subtotal</span>
+                      <span className="font-medium text-olive-800">
                         ${tier === "self-serve" ? "29" : "79"}
                       </span>
                     </div>
-                    <div className="border-t border-warm-200 pt-2 flex justify-between text-sm">
-                      <span className="font-medium text-navy-800">Total</span>
-                      <span className="font-bold text-navy-800 text-lg">
+                    <div className="border-t border-olive-200 pt-2 flex justify-between text-sm">
+                      <span className="font-medium text-olive-800">Total</span>
+                      <span className="font-bold text-olive-800 text-lg">
                         ${tier === "self-serve" ? "29" : "79"}
                       </span>
                     </div>
                   </div>
 
-                  <p className="text-xs text-warm-400 text-center">
+                  <p className="text-xs text-charcoal-400 text-center">
                     Your payment is processed securely. You can manage your
                     website from your dashboard.
                   </p>
@@ -528,7 +528,7 @@ function OrderFormContent() {
               )}
 
               {/* Navigation */}
-              <div className="flex items-center justify-between mt-8 pt-6 border-t border-warm-200">
+              <div className="flex items-center justify-between mt-8 pt-6 border-t border-olive-200">
                 {step > 0 ? (
                   <Button
                     variant="ghost"
@@ -584,7 +584,7 @@ export default function OrderPage() {
   return (
     <Suspense fallback={
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-4 border-rosegold-200 border-t-rosegold-500 rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-olive-200 border-t-olive-600 rounded-full animate-spin" />
       </div>
     }>
       <OrderFormContent />

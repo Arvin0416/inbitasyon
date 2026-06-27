@@ -14,20 +14,20 @@ export default function GalleryPage() {
         <div className="mx-auto max-w-7xl">
           <Link
             href="/"
-            className="inline-flex items-center gap-1 text-sm text-warm-500 hover:text-rosegold-600 transition-colors mb-8"
+            className="inline-flex items-center gap-1 text-sm text-charcoal-500 hover:text-olive-700 transition-colors mb-8"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Home
           </Link>
           <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 bg-rosegold-100 text-rosegold-700 px-4 py-1.5 rounded-full text-sm font-medium mb-4">
+            <div className="inline-flex items-center gap-2 bg-olive-100 text-olive-700 px-4 py-1.5 rounded-full text-sm font-medium mb-4">
               <Sparkles className="w-4 h-4" />
               Wedding Templates
             </div>
-            <h1 className="font-serif text-4xl sm:text-5xl font-bold text-navy-800 mb-4">
+            <h1 className="font-serif text-4xl sm:text-5xl font-bold text-olive-800 mb-4">
               Choose your perfect design
             </h1>
-            <p className="text-lg text-warm-500 max-w-2xl mx-auto">
+            <p className="text-lg text-charcoal-500 max-w-2xl mx-auto">
               Each template is crafted with love, fully customizable, and
               optimized for mobile. Click any design to preview or get started.
             </p>
@@ -47,10 +47,10 @@ export default function GalleryPage() {
 
       <section className="px-4 py-16 bg-gradient-romantic">
         <div className="mx-auto max-w-3xl text-center">
-          <h2 className="font-serif text-3xl font-bold text-navy-800 mb-4">
+          <h2 className="font-serif text-3xl font-bold text-olive-800 mb-4">
             Not sure which design to pick?
           </h2>
-          <p className="text-warm-500 mb-8 max-w-lg mx-auto">
+          <p className="text-charcoal-500 mb-8 max-w-lg mx-auto">
             Every template can be customized with your colors, photos, and
             personal touches. Start with any design and make it yours.
           </p>

@@ -28,7 +28,7 @@ export default function TemplateDetailPage() {
         <div className="mx-auto max-w-7xl">
           <Link
             href="/gallery"
-            className="inline-flex items-center gap-1 text-sm text-warm-500 hover:text-rosegold-600 transition-colors"
+            className="inline-flex items-center gap-1 text-sm text-charcoal-500 hover:text-olive-700 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Gallery
@@ -42,7 +42,7 @@ export default function TemplateDetailPage() {
             {/* Preview */}
             <div className="space-y-4">
               <div
-                className="aspect-[3/4] rounded-2xl overflow-hidden border border-warm-200 flex items-center justify-center relative group"
+                className="aspect-[3/4] rounded-2xl overflow-hidden border border-olive-200 flex items-center justify-center relative group"
                 style={{
                   background: `linear-gradient(135deg, ${template.secondaryColor} 0%, ${template.primaryColor}15 100%)`,
                 }}
@@ -90,8 +90,8 @@ export default function TemplateDetailPage() {
               <Card>
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-3">
-                    <Palette className="w-4 h-4 text-warm-500" />
-                    <span className="text-sm font-medium text-navy-700">
+                    <Palette className="w-4 h-4 text-charcoal-500" />
+                    <span className="text-sm font-medium text-olive-700">
                       Color Palette
                     </span>
                   </div>
@@ -127,28 +127,28 @@ export default function TemplateDetailPage() {
                   ))}
                 </div>
                 <h1
-                  className="text-3xl sm:text-4xl font-bold text-navy-800 mb-4"
+                  className="text-3xl sm:text-4xl font-bold text-olive-800 mb-4"
                   style={{ fontFamily: template.fontFamily }}
                 >
                   {template.name}
                 </h1>
-                <p className="text-lg text-warm-600 leading-relaxed">
+                <p className="text-lg text-charcoal-600 leading-relaxed">
                   {template.description}
                 </p>
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold text-navy-800 mb-4 flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-sage-500" />
+                <h3 className="text-lg font-semibold text-olive-800 mb-4 flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-olive-600" />
                   What&apos;s Included
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {template.features.map((feature) => (
                     <div
                       key={feature}
-                      className="flex items-start gap-2 text-sm text-warm-600"
+                      className="flex items-start gap-2 text-sm text-charcoal-600"
                     >
-                      <CheckCircle2 className="w-4 h-4 text-sage-500 mt-0.5 shrink-0" />
+                      <CheckCircle2 className="w-4 h-4 text-olive-600 mt-0.5 shrink-0" />
                       {feature}
                     </div>
                   ))}
@@ -156,7 +156,7 @@ export default function TemplateDetailPage() {
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold text-navy-800 mb-3">
+                <h3 className="text-lg font-semibold text-olive-800 mb-3">
                   Font
                 </h3>
                 <p
@@ -188,7 +188,7 @@ export default function TemplateDetailPage() {
       {/* Other Templates */}
       <section className="px-4 py-16 bg-gradient-romantic">
         <div className="mx-auto max-w-7xl">
-          <h2 className="font-serif text-2xl font-bold text-navy-800 mb-8 text-center">
+          <h2 className="font-serif text-2xl font-bold text-olive-800 mb-8 text-center">
             Explore other designs
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

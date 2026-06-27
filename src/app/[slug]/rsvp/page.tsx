@@ -43,11 +43,11 @@ export default function RSVPPage() {
       <div className="flex flex-col items-center justify-center min-h-[60vh] px-4">
         <Card className="max-w-md w-full text-center">
           <CardContent className="p-8 sm:p-12">
-            <Heart className="w-12 h-12 text-rosegold-300 mx-auto mb-4" />
-            <h1 className="font-serif text-2xl font-bold text-navy-800 mb-2">
+            <Heart className="w-12 h-12 text-olive-300 mx-auto mb-4" />
+            <h1 className="font-serif text-2xl font-bold text-olive-800 mb-2">
               Wedding website not found
             </h1>
-            <p className="text-warm-500 mb-6">
+            <p className="text-charcoal-500 mb-6">
               This wedding website doesn&apos;t exist yet.
             </p>
             <Link href="/">
@@ -99,13 +99,13 @@ export default function RSVPPage() {
       <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 py-16">
         <Card className="max-w-lg w-full text-center">
           <CardContent className="p-8 sm:p-12">
-            <div className="w-16 h-16 rounded-full bg-sage-100 flex items-center justify-center mx-auto mb-6">
-              <CheckCircle2 className="w-8 h-8 text-sage-600" />
+            <div className="w-16 h-16 rounded-full bg-olive-100 flex items-center justify-center mx-auto mb-6">
+              <CheckCircle2 className="w-8 h-8 text-olive-600" />
             </div>
-            <h2 className="font-serif text-2xl font-bold text-navy-800 mb-2">
+            <h2 className="font-serif text-2xl font-bold text-olive-800 mb-2">
               Thank you!
             </h2>
-            <p className="text-warm-500 mb-6">
+            <p className="text-charcoal-500 mb-6">
               Your RSVP has been submitted successfully.
             </p>
             <Link href={`/${slug}`}>
@@ -159,16 +159,16 @@ export default function RSVPPage() {
         <Card className="max-w-lg mx-auto shadow-md">
           <CardContent className="p-4">
             <div className="flex items-center justify-center gap-6 text-sm">
-              <div className="flex items-center gap-1.5 text-warm-500">
+              <div className="flex items-center gap-1.5 text-charcoal-500">
                 <Calendar className="w-4 h-4" style={{ color: palette.primary }} />
                 {formatDate(site.weddingDate)}
               </div>
-              <div className="flex items-center gap-1.5 text-warm-500">
+              <div className="flex items-center gap-1.5 text-charcoal-500">
                 <Clock className="w-4 h-4" style={{ color: palette.primary }} />
                 {formatTime(site.weddingTime)}
               </div>
             </div>
-            <div className="flex items-center justify-center gap-1.5 text-sm text-warm-500 mt-2">
+            <div className="flex items-center justify-center gap-1.5 text-sm text-charcoal-500 mt-2">
               <MapPin className="w-4 h-4" style={{ color: palette.primary }} />
               {site.venueName}
             </div>
@@ -204,18 +204,18 @@ export default function RSVPPage() {
                       }}
                       className={`p-4 rounded-xl border-2 text-center transition-all duration-200 ${
                         attending === true
-                          ? "border-sage-400 bg-sage-50"
-                          : "border-warm-200 hover:border-warm-300"
+                      ? "border-olive-400 bg-olive-50"
+                      : "border-olive-200 hover:border-olive-300"
                       }`}
                     >
                       <CheckCircle2
                         className={`w-6 h-6 mx-auto mb-1 ${
                           attending === true
-                            ? "text-sage-500"
-                            : "text-warm-300"
+                            ? "text-olive-600"
+                            : "text-charcoal-300"
                         }`}
                       />
-                      <span className="text-sm font-medium text-navy-700">
+                      <span className="text-sm font-medium text-olive-700">
                         Yes, I&apos;ll be there
                       </span>
                     </button>
@@ -227,11 +227,11 @@ export default function RSVPPage() {
                       }}
                       className={`p-4 rounded-xl border-2 text-center transition-all duration-200 ${
                         attending === false
-                          ? "border-rosegold-400 bg-rosegold-50"
-                          : "border-warm-200 hover:border-warm-300"
+                      ? "border-gold-400 bg-gold-50"
+                      : "border-olive-200 hover:border-olive-300"
                       }`}
                     >
-                      <span className="text-sm font-medium text-navy-700 block mt-2">
+                      <span className="text-sm font-medium text-olive-700 block mt-2">
                         Sorry, can&apos;t make it
                       </span>
                     </button>
