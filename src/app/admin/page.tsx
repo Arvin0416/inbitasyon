@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { db } from "@/lib/store";
 import { templates } from "@/data/templates";
+import { useAuth } from "@/lib/auth-context";
 import {
   Layout,
   ShoppingBag,
@@ -12,9 +13,11 @@ import {
   Image,
   ArrowRight,
   Shield,
+  LogOut,
 } from "lucide-react";
 
 export default function AdminDashboard() {
+  const { user, signOut } = useAuth();
   const totalSites = db.sites.size;
   const totalOrders = Array.from(db.orders.values()).reduce(
     (sum, orders) => sum + orders.length,
@@ -68,14 +71,25 @@ export default function AdminDashboard() {
         <div className="mx-auto max-w-6xl flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Shield className="w-5 h-5" />
-          {/* Header uses ShieldIcon below */}
             <span className="font-semibold">Invitasyon Admin</span>
           </div>
-          <Link href="/">
-            <Button variant="ghost" size="sm" className="text-white/80 hover:text-white">
-              View Site
-            </Button>
-          </Link>
+          <div className="flex items-center gap-4">
+            <span className="text-xs text-white/60 hidden sm:block">
+              {user?.email}
+            </span>
+            <Link href="/">
+              <Button variant="ghost" size="sm" className="text-white/80 hover:text-white">
+                View Site
+              </Button>
+            </Link>
+            <button
+              onClick={() => signOut()}
+              className="text-white/60 hover:text-white transition-colors p-1"
+              title="Sign out"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
 

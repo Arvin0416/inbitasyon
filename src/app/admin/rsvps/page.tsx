@@ -1,14 +1,17 @@
 "use client";
 
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { db } from "@/lib/store";
-import { ArrowLeft, Heart, Search } from "lucide-react";
+import { ArrowLeft, Heart, Search, Shield, LogOut } from "lucide-react";
+import { useAuth } from "@/lib/auth-context";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 
 export default function AdminRSVPsPage() {
+  const { user, signOut } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
 
   // Gather all RSVPs from all sites
@@ -38,9 +41,16 @@ export default function AdminRSVPsPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <div className="px-4 py-4 bg-navy-800 text-white">
-        <div className="mx-auto max-w-6xl flex items-center gap-2">
-          <ShieldIcon />
-          <span className="font-semibold">Invitasyon Admin</span>
+        <div className="mx-auto max-w-6xl flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Shield className="w-5 h-5" />
+            <span className="font-semibold">Invitasyon Admin</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="text-xs text-white/60 hidden sm:block">{user?.email}</span>
+            <Link href="/"><Button variant="ghost" size="sm" className="text-white/80 hover:text-white">View Site</Button></Link>
+            <button onClick={() => signOut()} className="text-white/60 hover:text-white transition-colors p-1" title="Sign out"><LogOut className="w-4 h-4" /></button>
+          </div>
         </div>
       </div>
 
@@ -166,23 +176,5 @@ export default function AdminRSVPsPage() {
         </div>
       </section>
     </div>
-  );
-}
-
-function ShieldIcon() {
-  return (
-    <svg
-      className="w-5 h-5"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={1.5}
-      stroke="currentColor"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"
-      />
-    </svg>
   );
 }
