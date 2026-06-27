@@ -1,18 +1,26 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { db } from "@/lib/store";
-import { ArrowLeft, Heart, Search, Shield, LogOut } from "lucide-react";
+import { db, syncAllRSVPs, syncAllSites } from "@/lib/store";
+import { ArrowLeft, Heart, Search, Shield, LogOut, RefreshCw } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
 
 export default function AdminRSVPsPage() {
   const { user, signOut } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
+  const [syncing, setSyncing] = useState(false);
+
+  useEffect(() => {
+    setSyncing(true);
+    Promise.all([syncAllRSVPs(), syncAllSites()])
+      .catch((e) => console.error("Failed to sync RSVPs:", e))
+      .finally(() => setSyncing(false));
+  }, []);
 
   // Gather all RSVPs from all sites
   const allRsvps = Array.from(db.rsvps.entries()).flatMap(([slug, rsvps]) =>
@@ -49,6 +57,12 @@ export default function AdminRSVPsPage() {
           <div className="flex items-center gap-4">
             <span className="text-xs text-white/60 hidden sm:block">{user?.email}</span>
             <Link href="/"><Button variant="ghost" size="sm" className="text-white/80 hover:text-white">View Site</Button></Link>
+            <button onClick={async () => {
+                setSyncing(true);
+                try { await Promise.all([syncAllRSVPs(), syncAllSites()]); }
+                catch (e) { console.error(e); }
+                finally { setSyncing(false); }
+              }} className="text-white/60 hover:text-white transition-colors p-1" title="Refresh"><RefreshCw className={`w-4 h-4 ${syncing ? "animate-spin" : ""}`} /></button>
             <button onClick={() => signOut()} className="text-white/60 hover:text-white transition-colors p-1" title="Sign out"><LogOut className="w-4 h-4" /></button>
           </div>
         </div>

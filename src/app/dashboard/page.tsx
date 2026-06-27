@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AuthProvider, useAuth } from "@/lib/auth-context";
-import { db } from "@/lib/store";
+import { db, fetchSiteBySlug, fetchRSVPsBySlug } from "@/lib/store";
 import { DashboardStats } from "@/lib/types";
 import { toast } from "sonner";
 import {
@@ -31,19 +31,24 @@ function DashboardContent() {
   const [mode, setMode] = useState<"slug" | "login">("slug");
   const [slugInput, setSlugInput] = useState("");
   const [viewingSlug, setViewingSlug] = useState<string | null>(null);
+  const [loadingView, setLoadingView] = useState(false);
 
   // Login form state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSigningIn, setIsSigningIn] = useState(false);
 
-  const handleView = () => {
+  const handleView = async () => {
     const slug = slugInput.trim().toLowerCase();
     if (!slug) {
       toast.error("Please enter your wedding URL slug");
       return;
     }
+    setLoadingView(true);
+    await fetchSiteBySlug(slug);
+    await fetchRSVPsBySlug(slug);
     setViewingSlug(slug);
+    setLoadingView(false);
   };
 
   const handleSignIn = async (e: React.FormEvent) => {
@@ -190,8 +195,8 @@ function DashboardContent() {
                       onKeyDown={(e) => e.key === "Enter" && handleView()}
                     />
                   </div>
-                  <Button variant="default" onClick={handleView}>
-                    View Dashboard
+                  <Button variant="default" onClick={handleView} disabled={loadingView}>
+                    {loadingView ? "Loading..." : "View Dashboard"}
                   </Button>
                 </div>
                 <p className="text-xs text-warm-400 mt-2">

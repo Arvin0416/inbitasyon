@@ -1,9 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { db } from "@/lib/store";
+import { db, syncAllSites, syncAllRSVPs } from "@/lib/store";
 import { templates } from "@/data/templates";
 import { useAuth } from "@/lib/auth-context";
 import {
@@ -14,10 +15,26 @@ import {
   ArrowRight,
   Shield,
   LogOut,
+  RefreshCw,
 } from "lucide-react";
 
 export default function AdminDashboard() {
   const { user, signOut } = useAuth();
+  const [syncing, setSyncing] = useState(false);
+
+  useEffect(() => {
+    const sync = async () => {
+      setSyncing(true);
+      try {
+        await Promise.all([syncAllSites(), syncAllRSVPs()]);
+      } catch (e) {
+        console.error("Failed to sync data:", e);
+      } finally {
+        setSyncing(false);
+      }
+    };
+    sync();
+  }, []);
   const totalSites = db.sites.size;
   const totalOrders = Array.from(db.orders.values()).reduce(
     (sum, orders) => sum + orders.length,
@@ -82,6 +99,18 @@ export default function AdminDashboard() {
                 View Site
               </Button>
             </Link>
+            <button
+              onClick={async () => {
+                setSyncing(true);
+                try { await Promise.all([syncAllSites(), syncAllRSVPs()]); }
+                catch (e) { console.error(e); }
+                finally { setSyncing(false); }
+              }}
+              className="text-white/60 hover:text-white transition-colors p-1"
+              title="Refresh data"
+            >
+              <RefreshCw className={`w-4 h-4 ${syncing ? "animate-spin" : ""}`} />
+            </button>
             <button
               onClick={() => signOut()}
               className="text-white/60 hover:text-white transition-colors p-1"
