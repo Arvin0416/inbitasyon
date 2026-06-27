@@ -1,14 +1,13 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-import { db } from "@/lib/store";
+import { db, saveRSVP } from "@/lib/store";
 import { getTemplateById } from "@/data/templates";
 import { formatDate, formatTime } from "@/lib/utils";
 import { RSVPResponse } from "@/lib/types";
@@ -29,7 +28,6 @@ function generateId(): string {
 
 export default function RSVPPage() {
   const params = useParams();
-  const router = useRouter();
   const slug = params.slug as string;
   const site = db.sites.get(slug);
 
@@ -70,7 +68,7 @@ export default function RSVPPage() {
       }
     : { primary: "#B76E79", secondary: "#FFF5EE", accent: "#D4AF37" };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!guestName.trim() || attending === null) {
@@ -89,10 +87,8 @@ export default function RSVPPage() {
       createdAt: new Date().toISOString(),
     };
 
-    // Save to store
-    const existing = db.rsvps.get(slug) || [];
-    existing.push(newRsvp);
-    db.rsvps.set(slug, existing);
+    // Save to in-memory store + Supabase if configured
+    await saveRSVP(newRsvp);
 
     setSubmitted(true);
     toast.success("Your RSVP has been submitted!");

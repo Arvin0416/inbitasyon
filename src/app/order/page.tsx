@@ -12,7 +12,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { templates } from "@/data/templates";
 import { COLOR_PALETTES, PRICING, GeneratedSite } from "@/lib/types";
 import { generateSlug } from "@/lib/utils";
-import { db } from "@/lib/store";
+import { saveSite, db } from "@/lib/store";
 import { toast } from "sonner";
 import {
   ArrowLeft,
@@ -120,7 +120,7 @@ function OrderFormContent() {
 
     const slug = formData.slug || generateSlug(`${formData.coupleName1} ${formData.coupleName2}`);
 
-    // Save the new site to the in-memory store
+    // Save the new site (in-memory + Supabase if configured)
     const newSite: GeneratedSite = {
       id: `site-${Date.now()}`,
       slug,
@@ -139,8 +139,7 @@ function OrderFormContent() {
       status: "active",
       createdAt: new Date().toISOString(),
     };
-    db.sites.set(slug, newSite);
-    db.orders.set(slug, []);
+    await saveSite(newSite);
 
     setGeneratedSlug(slug);
     setCompleted(true);

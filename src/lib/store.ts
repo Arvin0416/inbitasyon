@@ -1,18 +1,166 @@
-// Temporary in-memory storage for MVP demo
-// Replace with Supabase in production
-
+// Data store: sync in-memory for instant access + async Supabase backup
 import { GeneratedSite, RSVPResponse, Order } from "./types";
+import { isSupabaseConfigured } from "./supabase";
+import {
+  createSite,
+  getSiteBySlug,
+  listAllSites,
+  getRSVPsBySlug,
+  listAllRSVPs,
+  createRSVP,
+  listAllOrders,
+  createOrder,
+} from "./supabase-service";
 
-// In-memory storage
+// In-memory storage (always available, Supabase syncs in background)
+const inMemorySites = new Map<string, GeneratedSite>();
+const inMemoryRsvps = new Map<string, RSVPResponse[]>();
+const inMemoryOrders = new Map<string, Order[]>();
+
+// ─── Synchronous (in-memory) access for pages ───────────────────────────────
+
 export const db = {
-  sites: new Map<string, GeneratedSite>(),
-  rsvps: new Map<string, RSVPResponse[]>(),
-  orders: new Map<string, Order[]>(),
-  users: new Map<string, any>(),
+  sites: {
+    get(slug: string): GeneratedSite | undefined {
+      return inMemorySites.get(slug);
+    },
+    values(): GeneratedSite[] {
+      return Array.from(inMemorySites.values());
+    },
+    get size() {
+      return inMemorySites.size;
+    },
+  },
+  rsvps: {
+    get(slug: string): RSVPResponse[] | undefined {
+      return inMemoryRsvps.get(slug);
+    },
+    entries(): [string, RSVPResponse[]][] {
+      return Array.from(inMemoryRsvps.entries());
+    },
+    values(): RSVPResponse[][] {
+      return Array.from(inMemoryRsvps.values());
+    },
+    get size() {
+      return inMemoryRsvps.size;
+    },
+    set(slug: string, data: RSVPResponse[]) {
+      inMemoryRsvps.set(slug, data);
+    },
+  },
+  orders: {
+    get(slug: string): Order[] | undefined {
+      return inMemoryOrders.get(slug);
+    },
+    values(): Order[][] {
+      return Array.from(inMemoryOrders.values());
+    },
+  },
 };
 
-// Seed data
-export function seedDemoSite() {
+// ─── Async (Supabase-backed) operations ─────────────────────────────────────
+
+export async function saveSite(site: GeneratedSite): Promise<void> {
+  inMemorySites.set(site.slug, site);
+  if (isSupabaseConfigured()) {
+    await createSite(site);
+  }
+}
+
+export async function fetchSiteBySlug(slug: string): Promise<GeneratedSite | null> {
+  // Check memory first (instant)
+  const cached = inMemorySites.get(slug);
+  if (cached) return cached;
+
+  // Fallback to Supabase
+  if (isSupabaseConfigured()) {
+    const { data } = await getSiteBySlug(slug);
+    if (data) {
+      inMemorySites.set(slug, data);
+      return data;
+    }
+  }
+  return null;
+}
+
+export async function syncAllSites(): Promise<void> {
+  if (isSupabaseConfigured()) {
+    const { data } = await listAllSites();
+    if (data) {
+      data.forEach((site) => inMemorySites.set(site.slug, site));
+    }
+  }
+}
+
+export async function saveRSVP(rsvp: RSVPResponse): Promise<void> {
+  const existing = inMemoryRsvps.get(rsvp.siteId) || [];
+  existing.push(rsvp);
+  inMemoryRsvps.set(rsvp.siteId, existing);
+
+  if (isSupabaseConfigured()) {
+    await createRSVP(rsvp);
+  }
+}
+
+export async function fetchRSVPsBySlug(slug: string): Promise<RSVPResponse[]> {
+  const cached = inMemoryRsvps.get(slug);
+  if (cached && cached.length > 0) return cached;
+
+  if (isSupabaseConfigured()) {
+    const { data } = await getRSVPsBySlug(slug);
+    if (data) {
+      inMemoryRsvps.set(slug, data);
+      return data;
+    }
+  }
+  return inMemoryRsvps.get(slug) ?? [];
+}
+
+export async function syncAllRSVPs(): Promise<void> {
+  if (isSupabaseConfigured()) {
+    const { data } = await listAllRSVPs();
+    if (data) {
+      const grouped = new Map<string, RSVPResponse[]>();
+      data.forEach((rsvp) => {
+        const existing = grouped.get(rsvp.siteId) || [];
+        existing.push(rsvp);
+        grouped.set(rsvp.siteId, existing);
+      });
+      grouped.forEach((rsvps, slug) => inMemoryRsvps.set(slug, rsvps));
+    }
+  }
+}
+
+export async function saveOrder(order: Order): Promise<void> {
+  const existing = inMemoryOrders.get(order.slug) || [];
+  existing.push(order);
+  inMemoryOrders.set(order.slug, existing);
+
+  if (isSupabaseConfigured()) {
+    await createOrder(order);
+  }
+}
+
+export async function syncAllOrders(): Promise<void> {
+  if (isSupabaseConfigured()) {
+    const { data } = await listAllOrders();
+    if (data) {
+      const grouped = new Map<string, Order[]>();
+      data.forEach((order) => {
+        const existing = grouped.get(order.slug) || [];
+        existing.push(order);
+        grouped.set(order.slug, existing);
+      });
+      grouped.forEach((orders, slug) => inMemoryOrders.set(slug, orders));
+    }
+  }
+}
+
+// ─── Demo data seed ─────────────────────────────────────────────────────────
+
+export function seedDemoData() {
+  if (inMemorySites.size > 0) return;
+
   const demoSlug = "arvin-angel";
   const demo: GeneratedSite = {
     id: "demo-1",
@@ -32,7 +180,7 @@ export function seedDemoSite() {
     status: "active",
     createdAt: new Date().toISOString(),
   };
-  db.sites.set(demoSlug, demo);
+  inMemorySites.set(demoSlug, demo);
 
   const demoRsvps: RSVPResponse[] = [
     {
@@ -65,8 +213,8 @@ export function seedDemoSite() {
       createdAt: new Date().toISOString(),
     },
   ];
-  db.rsvps.set(demoSlug, demoRsvps);
+  inMemoryRsvps.set(demoSlug, demoRsvps);
 }
 
 // Initialize demo data
-seedDemoSite();
+seedDemoData();
