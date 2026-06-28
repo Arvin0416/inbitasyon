@@ -17,6 +17,10 @@ export function FloatingParticles() {
   const [particles, setParticles] = useState<Particle[]>([]);
 
   useEffect(() => {
+    // Skip particles for users who prefer reduced motion
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) return;
+
     const types: Particle["type"][] = ["heart", "sparkle", "dot"];
     setParticles(
       Array.from({ length: 25 }, (_, i) => ({

@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { FloatingParticles, CursorGlow } from "@/components/FloatingParticles";
+import { SmoothScrollProvider } from "@/components/SmoothScroll";
 import { Toaster } from "sonner";
 
 const inter = Inter({
@@ -40,11 +41,13 @@ export default function RootLayout({
       className={`${inter.variable} ${playfair.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <FloatingParticles />
-        <CursorGlow />
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <SmoothScrollProvider>
+          <FloatingParticles />
+          <CursorGlow />
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </SmoothScrollProvider>
         <Toaster
           position="top-center"
           toastOptions={{
