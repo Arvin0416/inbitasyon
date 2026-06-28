@@ -40,6 +40,9 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${playfair.variable} h-full antialiased`}
     >
+      <head>
+        <link rel="icon" href="/Icon-imbitasyon.svg" type="image/svg+xml" />
+      </head>
       <body className="min-h-full flex flex-col">
         <SmoothScrollProvider>
           <FloatingParticles />
