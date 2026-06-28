@@ -99,13 +99,22 @@ export function ScrollVideoSection() {
     const video = videoRef.current;
     if (!video) return;
 
-    const handleCanPlay = () => setVideoReady(true);
-    video.addEventListener("canplaythrough", handleCanPlay);
-    video.addEventListener("loadeddata", handleCanPlay);
+    // Check if already loaded — prevents race condition where events fire
+    // before the effect mounts (common for small videos over localhost)
+    if (video.readyState >= 2) {
+      setVideoReady(true);
+      // Show first frame immediately (not just black poster)
+      video.currentTime = 0.01;
+      return;
+    }
+
+    const handleReady = () => setVideoReady(true);
+    video.addEventListener("canplaythrough", handleReady);
+    video.addEventListener("loadeddata", handleReady);
 
     return () => {
-      video.removeEventListener("canplaythrough", handleCanPlay);
-      video.removeEventListener("loadeddata", handleCanPlay);
+      video.removeEventListener("canplaythrough", handleReady);
+      video.removeEventListener("loadeddata", handleReady);
     };
   }, []);
 
@@ -124,7 +133,7 @@ export function ScrollVideoSection() {
     }
 
     const setupScrollTrigger = () => {
-      ScrollTrigger.create({
+      const st = ScrollTrigger.create({
         trigger: container,
         start: "top top",
         end: "+=3000",
@@ -146,12 +155,21 @@ export function ScrollVideoSection() {
           }
         },
       });
+
+      // Show first frame immediately
+      setVideoReady(true);
+      video.currentTime = 0.01;
     };
 
     if (video.readyState >= 2) {
       setupScrollTrigger();
+      // Show first frame
+      video.currentTime = 0.01;
     } else {
-      video.addEventListener("loadeddata", setupScrollTrigger, { once: true });
+      video.addEventListener("loadeddata", () => {
+        setupScrollTrigger();
+        video.currentTime = 0.01;
+      }, { once: true });
     }
   }, { scope: containerRef });
 
