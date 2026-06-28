@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Heart, LayoutGrid, Sparkles, DollarSign, Menu, X } from "lucide-react";
+import { LayoutGrid, Sparkles, DollarSign, Menu, X } from "lucide-react";
+import { Logo } from "@/components/Logo";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -20,14 +21,13 @@ export function Header() {
       {/* Desktop: macOS-style floating bottom dock */}
       <nav className="hidden md:flex fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
         <div className="flex items-center gap-1 px-2 py-2 bg-white/80 backdrop-blur-2xl border border-olive-200/50 rounded-full shadow-[0_8px_32px_rgba(40,54,24,0.12)]">
-          {/* Logo */}
-          <Link
+          {/* Logo */}            <Link
             href="/"
-            className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-olive-50 transition-all duration-200 group"
+            className="flex items-center gap-2 px-4 py-1.5 rounded-full hover:bg-olive-50 transition-all duration-200 group"
           >
-            <Heart className="w-5 h-5 text-olive-600 transition-transform duration-200 group-hover:scale-110" />
-            <span className="text-sm font-serif font-semibold text-olive-800 tracking-tight">
-              Invitasyon
+            <Logo className="w-10 h-10" />
+            <span className="text-sm font-serif font-semibold text-olive-800 tracking-tight italic">
+              Imbitasyon
             </span>
           </Link>
 
@@ -69,9 +69,9 @@ export function Header() {
             href="/"
             className="flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-olive-50 transition-colors"
           >
-            <Heart className="w-5 h-5 text-olive-600" />
-            <span className="text-sm font-serif font-semibold text-olive-800">
-              Invitasyon
+            <Logo className="w-9 h-9" />
+            <span className="text-sm font-serif font-semibold text-olive-800 italic">
+              Imbitasyon
             </span>
           </Link>
 

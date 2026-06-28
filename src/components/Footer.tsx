@@ -9,8 +9,8 @@ export function Footer() {
           <div className="space-y-3">
             <Link href="/" className="flex items-center gap-2">
               <Heart className="h-5 w-5 text-olive-600" />
-              <span className="text-lg font-serif font-semibold text-olive-800">
-                Invitasyon
+              <span className="text-lg font-serif font-semibold text-olive-800 italic">
+                Imbitasyon
               </span>
             </Link>
             <p className="text-sm text-charcoal-500 max-w-xs">
@@ -59,7 +59,7 @@ export function Footer() {
         </div>
         <div className="mt-10 pt-8 border-t border-olive-100">
           <p className="text-center text-xs text-charcoal-400">
-            &copy; {new Date().getFullYear()} Invitasyon. All rights reserved. Made with love.
+            &copy; {new Date().getFullYear()} Imbitasyon. All rights reserved. Made with love.
           </p>
         </div>
       </div>

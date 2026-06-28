@@ -16,14 +16,14 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Invitasyon — Beautiful Wedding Websites in Minutes",
+  title: "Imbitasyon — Beautiful Wedding Websites in Minutes",
   description:
     "Create a beautiful wedding invitation website with RSVP in minutes. Choose a romantic design, add your details, and share your personal wedding URL.",
   openGraph: {
-    title: "Invitasyon — Beautiful Wedding Websites in Minutes",
+    title: "Imbitasyon — Beautiful Wedding Websites in Minutes",
     description:
       "Create a beautiful wedding invitation website with RSVP in minutes.",
-    siteName: "Invitasyon",
+    siteName: "Imbitasyon",
     type: "website",
   },
 };
