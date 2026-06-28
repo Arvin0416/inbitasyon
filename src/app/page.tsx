@@ -5,21 +5,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import { TemplateCard } from "@/components/TemplateCard";
 import { templates } from "@/data/templates";
 import { PRICING } from "@/lib/types";
-import { Logo, LogoWordmark } from "@/components/Logo";
+import { ScrollVideoSection } from "@/components/ScrollVideoSection";
 import { ParallaxSection } from "@/components/ParallaxSection";
 import { ScrollReveal } from "@/components/ScrollReveal";
-import { TextScramble } from "@/components/TextScramble";
 import {
   Heart,
-  Sparkles,
   Share2,
   CheckCircle2,
   ArrowRight,
   Palette,
   Globe,
   MessageCircle,
-  ScrollText,
-  ChevronDown,
   Star,
   Users,
   Clock,
@@ -87,102 +83,8 @@ const displayedTemplates = templates.slice(0, 3);
 export default function HomePage() {
   return (
     <div className="flex flex-col">
-      {/* Hero Section with parallax background */}
-      <ParallaxSection
-        className="px-4 pt-32 pb-24 sm:pt-40 sm:pb-32 lg:pt-48 lg:pb-44"
-        speed={0.4}
-        bgClassName="bg-gradient-to-br from-cream-50 via-olive-50 to-gold-50"
-      >
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-1/4 -left-20 w-72 h-72 rounded-full bg-olive-200/20 blur-3xl" />
-          <div className="absolute bottom-1/4 -right-20 w-80 h-80 rounded-full bg-gold-200/15 blur-3xl" />
-          <div className="absolute top-1/3 left-1/3 w-96 h-96 rounded-full bg-olive-100/10 blur-3xl" />
-          <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, #283618 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
-        </div>
-
-        <div className="relative mx-auto max-w-4xl text-center">
-          <ScrollReveal delay={100}>
-            <div className="mb-8">
-              <Logo className="w-32 sm:w-40 mx-auto mb-4" />
-              <LogoWordmark className="mt-2" />
-            </div>
-          </ScrollReveal>
-
-          <ScrollReveal delay={300}>
-            <div className="mb-8">
-              <Badge variant="olive" className="px-5 py-2 text-sm tracking-wide uppercase">
-                <Sparkles className="w-3.5 h-3.5 mr-2" />
-                Wedding Invitations, Reimagined
-              </Badge>
-            </div>
-          </ScrollReveal>
-
-          <ScrollReveal delay={500}>
-            <div>
-              <div className="flex items-center justify-center gap-4 mb-6">
-                <div className="h-px w-12 bg-olive-300" />
-                <ScrollText className="w-6 h-6 text-olive-500" />
-                <div className="h-px w-12 bg-olive-300" />
-              </div>
-              <h1 className="font-serif text-5xl sm:text-6xl lg:text-8xl font-bold tracking-tight text-olive-800 text-balance leading-[1.1]">
-                <TextScramble text="Your Love Story" duration={1200} tag="span" />
-                <span className="block text-gold-500 mt-2">
-                  <TextScramble text="Designed & Shared" duration={1400} tag="span" />
-                </span>
-              </h1>
-            </div>
-          </ScrollReveal>
-
-          <ScrollReveal delay={700}>
-            <p className="mt-8 text-lg sm:text-xl text-charcoal-500 max-w-2xl mx-auto text-balance leading-relaxed">
-              Create a breathtaking wedding invitation website in minutes.
-              Choose a beautiful design, add your personal touches, and share
-              your unique link with everyone you love.
-            </p>
-          </ScrollReveal>
-
-          <ScrollReveal delay={900}>
-            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/gallery">
-                <Button variant="default" size="xl" className="w-full sm:w-auto shadow-lg shadow-olive-600/20 glow-pulse">
-                  Browse Designs
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-              <Link href="/#how-it-works">
-                <Button variant="secondary" size="xl" className="w-full sm:w-auto">
-                  See How It Works
-                </Button>
-              </Link>
-            </div>
-          </ScrollReveal>
-
-          <ScrollReveal delay={1100}>
-            <div className="mt-14 flex flex-wrap items-center justify-center gap-6 sm:gap-8 text-sm text-charcoal-500">
-              <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-olive-600" />
-                No monthly fees
-              </span>
-              <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-olive-600" />
-                Mobile-friendly
-              </span>
-              <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-olive-600" />
-                Instant setup
-              </span>
-            </div>
-          </ScrollReveal>
-
-          <ScrollReveal delay={1300}>
-            <div className="mt-16 flex justify-center">
-              <div className="animate-bounce">
-                <ChevronDown className="w-6 h-6 text-olive-400" />
-              </div>
-            </div>
-          </ScrollReveal>
-        </div>
-      </ParallaxSection>
+      {/* Hero: Scroll-Driven Video Section */}
+      <ScrollVideoSection />
 
       {/* Stats Bar */}
       <ScrollReveal>
