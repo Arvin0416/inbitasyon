@@ -85,6 +85,7 @@ export function ScrollVideoSection() {
   const heartRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
   const scrollHintRef = useRef<HTMLDivElement>(null);
+  const scrollTriggerSetup = useRef(false);
   const [videoReady, setVideoReady] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -95,35 +96,15 @@ export function ScrollVideoSection() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    // Check if already loaded — prevents race condition where events fire
-    // before the effect mounts (common for small videos over localhost)
-    if (video.readyState >= 2) {
-      setVideoReady(true);
-      // Show first frame immediately (not just black poster)
-      video.currentTime = 0.01;
-      return;
-    }
-
-    const handleReady = () => setVideoReady(true);
-    video.addEventListener("canplaythrough", handleReady);
-    video.addEventListener("loadeddata", handleReady);
-
-    return () => {
-      video.removeEventListener("canplaythrough", handleReady);
-      video.removeEventListener("loadeddata", handleReady);
-    };
-  }, []);
-
+  // Single, consolidated video loading + ScrollTrigger setup via useGSAP.
+  // All logic lives here to avoid race conditions between useEffect and useGSAP
+  // competing for the same video load events (especially under React 19 StrictMode).
   useGSAP(() => {
     const video = videoRef.current;
     const container = containerRef.current;
     if (!video || !container) return;
 
-    // Check for prefers-reduced-motion
+    // Check for prefers-reduced-motion — skip video scrub, show ready immediately
     const prefersReduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
@@ -132,8 +113,11 @@ export function ScrollVideoSection() {
       return;
     }
 
-    const setupScrollTrigger = () => {
-      const st = ScrollTrigger.create({
+    function setupScrollTrigger() {
+      if (scrollTriggerSetup.current) return;
+      scrollTriggerSetup.current = true;
+
+      ScrollTrigger.create({
         trigger: container,
         start: "top top",
         end: "+=3000",
@@ -141,10 +125,14 @@ export function ScrollVideoSection() {
         scrub: 0.5,
         anticipatePin: 1,
         onUpdate: (self) => {
+          const v = videoRef.current;
+          if (!v) return;
           const p = self.progress;
 
           // Scrub video
-          video.currentTime = p * video.duration;
+          if (v.duration) {
+            v.currentTime = p * v.duration;
+          }
 
           // Update overlays via refs (no React state)
           updateOverlays(p);
@@ -157,20 +145,43 @@ export function ScrollVideoSection() {
       });
 
       // Show first frame immediately
+      if (videoRef.current) {
+        videoRef.current.currentTime = 0.01;
+      }
       setVideoReady(true);
-      video.currentTime = 0.01;
-    };
-
-    if (video.readyState >= 2) {
-      setupScrollTrigger();
-      // Show first frame
-      video.currentTime = 0.01;
-    } else {
-      video.addEventListener("loadeddata", () => {
-        setupScrollTrigger();
-        video.currentTime = 0.01;
-      }, { once: true });
     }
+
+    function onVideoReady() {
+      setupScrollTrigger();
+    }
+
+    const vid = video; // capture narrowed non-null reference
+
+    // Strategy 1: If video is already loaded, set up immediately
+    if (vid.readyState >= 2) {
+      setupScrollTrigger();
+      return;
+    }
+
+    // Strategy 2: Listen for load events
+    vid.addEventListener("loadeddata", onVideoReady, { once: true });
+    vid.addEventListener("canplaythrough", onVideoReady, { once: true });
+
+    // Strategy 3: Polling fallback — if events are missed (StrictMode double-mount,
+    // browser quirks, etc.), periodically check readyState.
+    const pollInterval = setInterval(() => {
+      if (vid.readyState >= 2) {
+        clearInterval(pollInterval);
+        onVideoReady();
+      }
+    }, 200);
+
+    // Cleanup polling + event listeners on unmount
+    return () => {
+      clearInterval(pollInterval);
+      vid.removeEventListener("loadeddata", onVideoReady);
+      vid.removeEventListener("canplaythrough", onVideoReady);
+    };
   }, { scope: containerRef });
 
   // Direct DOM updates for overlays (no React re-renders)
