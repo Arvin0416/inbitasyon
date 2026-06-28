@@ -225,11 +225,12 @@ export function ScrollVideoSection() {
   return (
     <div ref={containerRef} className="relative">
       <div className="h-screen w-full bg-[#1a1a12] flex items-center justify-center overflow-hidden">
-        {/* Video */}
+        {/* Video — starts invisible, fades in once loaded */}
         <video
           ref={videoRef}
           src="/imbitasyon.mp4"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover transition-opacity duration-1000 ease-out"
+          style={{ opacity: videoReady ? 1 : 0 }}
           muted
           playsInline
           preload="auto"
@@ -292,17 +293,18 @@ export function ScrollVideoSection() {
           </div>
         </div>
 
-        {/* Loading state */}
-        {!videoReady && (
-          <div className="absolute inset-0 flex items-center justify-center bg-[#1a1a12]">
-            <div className="flex flex-col items-center gap-4">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-gold-400/30 border-t-gold-400 rounded-full animate-spin" />
-              <p className="text-cream-200/50 text-xs sm:text-sm">
-                Loading experience...
-              </p>
-            </div>
+        {/* Loading state — fades out as video fades in */}
+        <div
+          className="absolute inset-0 flex items-center justify-center bg-[#1a1a12] transition-opacity duration-1000 ease-out pointer-events-none"
+          style={{ opacity: videoReady ? 0 : 1 }}
+        >
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-gold-400/30 border-t-gold-400 rounded-full animate-spin" />
+            <p className="text-cream-200/50 text-xs sm:text-sm">
+              Loading experience...
+            </p>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
