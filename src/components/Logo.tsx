@@ -1,4 +1,4 @@
-export function Logo({ className = "" }: { className?: string }) {
+export function Logo({ className = "", dark = false }: { className?: string; dark?: boolean }) {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
@@ -7,6 +7,7 @@ export function Logo({ className = "" }: { className?: string }) {
       className={className}
       width={360}
       height={360}
+      style={dark ? { filter: "invert(1) brightness(2)" } : undefined}
     />
   );
 }

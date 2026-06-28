@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Heart } from "lucide-react";
+import { Logo } from "@/components/Logo";
 
 export function Footer() {
   return (
@@ -8,10 +8,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="space-y-3">
             <Link href="/" className="flex items-center gap-2">
-              <Heart className="h-5 w-5 text-olive-600" />
-              <span className="text-lg font-serif font-semibold text-olive-800 italic">
-                Imbitasyon
-              </span>
+              <Logo className="h-8 w-auto" />
             </Link>
             <p className="text-sm text-charcoal-500 max-w-xs">
               Beautiful wedding invitation websites with RSVP — created in minutes.

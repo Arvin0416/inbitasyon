@@ -21,12 +21,31 @@ export const metadata: Metadata = {
   title: "Imbitasyon — Beautiful Wedding Websites in Minutes",
   description:
     "Create a beautiful wedding invitation website with RSVP in minutes. Choose a romantic design, add your details, and share your personal wedding URL.",
+  icons: {
+    icon: "/Icon-imbitasyon.svg",
+    shortcut: "/Icon-imbitasyon.svg",
+  },
   openGraph: {
     title: "Imbitasyon — Beautiful Wedding Websites in Minutes",
     description:
       "Create a beautiful wedding invitation website with RSVP in minutes.",
     siteName: "Imbitasyon",
     type: "website",
+    images: [
+      {
+        url: "/Icon-imbitasyon.svg",
+        width: 360,
+        height: 360,
+        alt: "Imbitasyon — Wedding Invitation Websites",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Imbitasyon — Beautiful Wedding Websites in Minutes",
+    description:
+      "Create a beautiful wedding invitation website with RSVP in minutes.",
+    images: ["/Icon-imbitasyon.svg"],
   },
 };
 
@@ -40,9 +59,6 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${playfair.variable} h-full antialiased`}
     >
-      <head>
-        <link rel="icon" href="/Icon-imbitasyon.svg" type="image/svg+xml" />
-      </head>
       <body className="min-h-full flex flex-col">
         <SmoothScrollProvider>
           <FloatingParticles />
