@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { LayoutGrid, Sparkles, DollarSign, Menu, X } from "lucide-react";
 import { Logo } from "@/components/Logo";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navItems = [
@@ -15,17 +15,31 @@ const navItems = [
 
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <>
-      {/* Desktop: macOS-style floating bottom dock */}
-      <nav className="hidden md:flex fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
-        <div className="flex items-center gap-1 px-2 py-2 bg-white/80 backdrop-blur-2xl border border-olive-200/50 rounded-full shadow-[0_8px_32px_rgba(40,54,24,0.12)]">
-          {/* Logo */}            <Link
+      {/* Desktop: floating top navbar */}
+      <nav className="hidden md:flex fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-300">
+        <div
+          className={`flex items-center gap-1 px-2 py-2 rounded-full transition-all duration-300 ${
+            scrolled
+              ? "bg-white/90 backdrop-blur-2xl border border-olive-200/50 shadow-[0_8px_32px_rgba(40,54,24,0.15)]"
+              : "bg-white/60 backdrop-blur-xl border border-transparent shadow-none"
+          }`}
+        >
+          {/* Logo */}
+          <Link
             href="/"
             className="flex items-center gap-2 px-4 py-1.5 rounded-full hover:bg-olive-50 transition-all duration-200 group"
           >
-            <Logo className="w-10 h-10" />
+            <Logo className="w-8 h-8" />
             <span className="text-sm font-serif font-semibold text-olive-800 tracking-tight italic">
               Imbitasyon
             </span>
@@ -62,14 +76,20 @@ export function Header() {
         </div>
       </nav>
 
-      {/* Mobile: bottom floating dock */}
-      <nav className="md:hidden fixed bottom-4 left-4 right-4 z-50">
-        <div className="flex items-center justify-between px-3 py-2 bg-white/85 backdrop-blur-2xl border border-olive-200/50 rounded-2xl shadow-[0_8px_32px_rgba(40,54,24,0.12)]">
+      {/* Mobile: floating top bar */}
+      <nav className="md:hidden fixed top-3 left-3 right-3 z-50">
+        <div
+          className={`flex items-center justify-between px-3 py-2 rounded-2xl transition-all duration-300 ${
+            scrolled
+              ? "bg-white/90 backdrop-blur-2xl border border-olive-200/50 shadow-[0_8px_32px_rgba(40,54,24,0.15)]"
+              : "bg-white/60 backdrop-blur-xl border border-transparent shadow-none"
+          }`}
+        >
           <Link
             href="/"
             className="flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-olive-50 transition-colors"
           >
-            <Logo className="w-9 h-9" />
+            <Logo className="w-8 h-8" />
             <span className="text-sm font-serif font-semibold text-olive-800 italic">
               Imbitasyon
             </span>
@@ -103,9 +123,9 @@ export function Header() {
         <AnimatePresence>
           {mobileOpen && (
             <motion.div
-              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+              initial={{ opacity: 0, y: -10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 10, scale: 0.95 }}
+              exit={{ opacity: 0, y: -10, scale: 0.95 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
               className="mt-2 bg-white/90 backdrop-blur-2xl border border-olive-200/50 rounded-2xl shadow-lg p-3 space-y-1"
             >
@@ -131,8 +151,6 @@ export function Header() {
           )}
         </AnimatePresence>
       </nav>
-
-
     </>
   );
 }

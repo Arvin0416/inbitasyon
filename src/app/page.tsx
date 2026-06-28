@@ -17,6 +17,9 @@ import {
   MessageCircle,
   ScrollText,
   ChevronDown,
+  Star,
+  Users,
+  Clock,
 } from "lucide-react";
 
 const steps = [
@@ -70,13 +73,21 @@ const features = [
   },
 ];
 
+const stats = [
+  { icon: Users, value: "2,500+", label: "Happy Couples" },
+  { icon: Star, value: "4.9/5", label: "Average Rating" },
+  { icon: Clock, value: "5 min", label: "Setup Time" },
+];
+
 const displayedTemplates = templates.slice(0, 3);
 
 export default function HomePage() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-hero px-4 py-24 sm:py-32 lg:py-44">
+      <section className="relative overflow-hidden px-4 pt-32 pb-24 sm:pt-40 sm:pb-32 lg:pt-48 lg:pb-44">
+        {/* Animated gradient background */}
+        <div className="absolute inset-0 animate-gradient bg-gradient-to-br from-cream-50 via-olive-50 to-gold-50" />
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-1/4 -left-20 w-72 h-72 rounded-full bg-olive-200/20 blur-3xl" />
           <div className="absolute bottom-1/4 -right-20 w-80 h-80 rounded-full bg-gold-200/15 blur-3xl" />
@@ -117,7 +128,7 @@ export default function HomePage() {
 
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/gallery">
-              <Button variant="default" size="xl" className="w-full sm:w-auto shadow-lg shadow-olive-600/20">
+              <Button variant="default" size="xl" className="w-full sm:w-auto shadow-lg shadow-olive-600/20 glow-pulse">
                 Browse Designs
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
@@ -152,6 +163,23 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Stats Bar */}
+      <section className="px-4 py-12 bg-olive-800">
+        <div className="mx-auto max-w-5xl">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
+            {stats.map((stat) => (
+              <div key={stat.label} className="flex items-center justify-center gap-3">
+                <stat.icon className="w-8 h-8 text-gold-400" />
+                <div className="text-left">
+                  <div className="text-2xl font-bold text-white">{stat.value}</div>
+                  <div className="text-sm text-olive-200">{stat.label}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Featured Templates */}
       <section className="px-4 py-24 sm:py-32">
         <div className="mx-auto max-w-7xl">
@@ -166,7 +194,9 @@ export default function HomePage() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {displayedTemplates.map((template) => (
-              <TemplateCard key={template.id} template={template} />
+              <div key={template.id} className="magnetic-hover">
+                <TemplateCard template={template} />
+              </div>
             ))}
           </div>
           <div className="text-center mt-12">
@@ -233,7 +263,7 @@ export default function HomePage() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((feature) => (
-              <Card key={feature.title} className="text-center h-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-olive-100/80">
+              <Card key={feature.title} className="text-center h-full magnetic-hover border-olive-100/80 group">
                 <CardContent className="p-8">
                   <div className="w-14 h-14 rounded-2xl bg-olive-50 flex items-center justify-center mx-auto mb-5 group-hover:scale-110 transition-transform">
                     <feature.icon className={`w-7 h-7 ${feature.color}`} />
@@ -269,7 +299,7 @@ export default function HomePage() {
               ([key, tier]) => (
                 <Card
                   key={key}
-                  className={`relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-full ${
+                  className={`relative overflow-hidden magnetic-hover h-full ${
                     key === "self-serve"
                       ? "border-olive-400 ring-1 ring-olive-400/50"
                       : "border-olive-200"
@@ -339,7 +369,7 @@ export default function HomePage() {
       {/* CTA */}
       <section className="px-4 py-24 sm:py-32">
         <div className="mx-auto max-w-3xl text-center">
-          <div className="bg-gradient-to-br from-olive-800 via-olive-700 to-olive-900 rounded-3xl p-12 sm:p-16 relative overflow-hidden">
+          <div className="bg-gradient-to-br from-olive-800 via-olive-700 to-olive-900 rounded-3xl p-12 sm:p-16 relative overflow-hidden shimmer-overlay">
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
               <div className="absolute -top-20 -right-20 w-60 h-60 rounded-full bg-gold-400/10 blur-3xl" />
               <div className="absolute -bottom-20 -left-20 w-60 h-60 rounded-full bg-olive-400/10 blur-3xl" />
@@ -357,7 +387,7 @@ export default function HomePage() {
                 <Button
                   variant="gold"
                   size="xl"
-                  className="shadow-lg shadow-gold-500/25"
+                  className="shadow-lg shadow-gold-500/25 glow-pulse"
                 >
                   Create Your Wedding Website
                   <ArrowRight className="ml-2 h-5 w-5" />

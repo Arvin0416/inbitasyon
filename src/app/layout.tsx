@@ -3,6 +3,7 @@ import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { FloatingParticles, CursorGlow } from "@/components/FloatingParticles";
 import { Toaster } from "sonner";
 
 const inter = Inter({
@@ -38,7 +39,9 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${playfair.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col pb-24 md:pb-20">
+      <body className="min-h-full flex flex-col">
+        <FloatingParticles />
+        <CursorGlow />
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
