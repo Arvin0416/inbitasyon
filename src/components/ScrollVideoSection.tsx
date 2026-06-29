@@ -85,7 +85,7 @@ export function ScrollVideoSection() {
   const heartRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
   const scrollHintRef = useRef<HTMLDivElement>(null);
-  const scrollTriggerSetup = useRef(false);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [videoReady, setVideoReady] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -96,15 +96,49 @@ export function ScrollVideoSection() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Single, consolidated video loading + ScrollTrigger setup via useGSAP.
-  // All logic lives here to avoid race conditions between useEffect and useGSAP
-  // competing for the same video load events (especially under React 19 StrictMode).
+  // Direct DOM updates for overlays (no React re-renders per scroll frame)
+  function updateOverlays(p: number) {
+    const container = overlaysRef.current;
+    if (!container) return;
+
+    if (heartRef.current) {
+      const showHeart = p > 0.10;
+      heartRef.current.style.opacity = showHeart ? "1" : "0";
+      heartRef.current.style.transform = showHeart
+        ? "translateX(-50%) scale(1)"
+        : "translateX(-50%) scale(0)";
+    }
+
+    if (titleRef.current) {
+      const showTitle = p > 0.50;
+      titleRef.current.style.opacity = showTitle ? "1" : "0";
+      titleRef.current.style.transform = showTitle
+        ? "translateX(-50%) translateY(0)"
+        : "translateX(-50%) translateY(20px)";
+    }
+
+    if (scrollHintRef.current) {
+      scrollHintRef.current.style.opacity = p > 0.05 ? "0" : "1";
+    }
+
+    const badges = container.querySelectorAll("[data-threshold]");
+    badges.forEach((el) => {
+      const threshold = parseFloat(el.getAttribute("data-threshold") || "0");
+      const show = p >= threshold;
+      (el as HTMLElement).style.opacity = show ? "1" : "0";
+      (el as HTMLElement).style.transform = show ? "scale(1)" : "scale(0.9)";
+    });
+  }
+
+  // useGSAP handles GSAP/ScrollTrigger lifecycle including StrictMode cleanup
+  // No manual guard ref needed — useGSAP's context automatically reverts
+  // ScrollTriggers on unmount/cleanup, so the callback creates a fresh one each time.
   useGSAP(() => {
     const video = videoRef.current;
     const container = containerRef.current;
     if (!video || !container) return;
 
-    // Check for prefers-reduced-motion — skip video scrub, show ready immediately
+    // Check for prefers-reduced-motion
     const prefersReduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
@@ -114,9 +148,6 @@ export function ScrollVideoSection() {
     }
 
     function setupScrollTrigger() {
-      if (scrollTriggerSetup.current) return;
-      scrollTriggerSetup.current = true;
-
       ScrollTrigger.create({
         trigger: container,
         start: "top top",
@@ -129,22 +160,19 @@ export function ScrollVideoSection() {
           if (!v) return;
           const p = self.progress;
 
-          // Scrub video
           if (v.duration) {
             v.currentTime = p * v.duration;
           }
 
-          // Update overlays via refs (no React state)
           updateOverlays(p);
 
-          // Update progress bar width
           if (progressBarRef.current) {
             progressBarRef.current.style.width = `${p * 100}%`;
           }
         },
       });
 
-      // Show first frame immediately
+      // Show first frame
       if (videoRef.current) {
         videoRef.current.currentTime = 0.01;
       }
@@ -152,75 +180,47 @@ export function ScrollVideoSection() {
     }
 
     function onVideoReady() {
+      // Clear polling if any
+      if (pollRef.current) {
+        clearInterval(pollRef.current);
+        pollRef.current = null;
+      }
       setupScrollTrigger();
     }
 
-    const vid = video; // capture narrowed non-null reference
+    const vid = video;
 
-    // Strategy 1: If video is already loaded, set up immediately
+    // Option A: Already loaded
     if (vid.readyState >= 2) {
       setupScrollTrigger();
       return;
     }
 
-    // Strategy 2: Listen for load events
+    // Option B: Wait for load events
     vid.addEventListener("loadeddata", onVideoReady, { once: true });
     vid.addEventListener("canplaythrough", onVideoReady, { once: true });
 
-    // Strategy 3: Polling fallback — if events are missed (StrictMode double-mount,
-    // browser quirks, etc.), periodically check readyState.
-    const pollInterval = setInterval(() => {
+    // Option C: Polling fallback (catches edge cases)
+    pollRef.current = setInterval(() => {
       if (vid.readyState >= 2) {
-        clearInterval(pollInterval);
+        if (pollRef.current) {
+          clearInterval(pollRef.current);
+          pollRef.current = null;
+        }
         onVideoReady();
       }
     }, 200);
 
-    // Cleanup polling + event listeners on unmount
+    // Cleanup on unmount/StrictMode reversion
     return () => {
-      clearInterval(pollInterval);
+      if (pollRef.current) {
+        clearInterval(pollRef.current);
+        pollRef.current = null;
+      }
       vid.removeEventListener("loadeddata", onVideoReady);
       vid.removeEventListener("canplaythrough", onVideoReady);
     };
   }, { scope: containerRef });
-
-  // Direct DOM updates for overlays (no React re-renders)
-  function updateOverlays(p: number) {
-    const container = overlaysRef.current;
-    if (!container) return;
-
-    // Heart: show once, persist
-    if (heartRef.current) {
-      const showHeart = p > 0.10;
-      heartRef.current.style.opacity = showHeart ? "1" : "0";
-      heartRef.current.style.transform = showHeart
-        ? "translateX(-50%) scale(1)"
-        : "translateX(-50%) scale(0)";
-    }
-
-    // Title: show and persist
-    if (titleRef.current) {
-      const showTitle = p > 0.50;
-      titleRef.current.style.opacity = showTitle ? "1" : "0";
-      titleRef.current.style.transform = showTitle
-        ? "translateX(-50%) translateY(0)"
-        : "translateX(-50%) translateY(20px)";
-    }
-
-    // Scroll hint: fade out
-    if (scrollHintRef.current) {
-      scrollHintRef.current.style.opacity = p > 0.05 ? "0" : "1";
-    }
-
-    // Feature badges
-    const badges = container.querySelectorAll("[data-threshold]");
-    badges.forEach((el) => {
-      const threshold = parseFloat(el.getAttribute("data-threshold") || "0");
-      const show = p >= threshold;
-      (el as HTMLElement).style.opacity = show ? "1" : "0";
-      (el as HTMLElement).style.transform = show ? "scale(1)" : "scale(0.9)";
-    });
-  }
 
   return (
     <div ref={containerRef} className="relative">
