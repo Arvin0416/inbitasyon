@@ -6,7 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { db } from "@/lib/store";
 import { getTemplateById } from "@/data/templates";
+import { localTemplates } from "@/lib/store";
 import { formatDate, formatTime } from "@/lib/utils";
+import { buildVariableMap, renderTemplateHtml } from "@/lib/template-renderer";
 import {
   Calendar,
   Clock,
@@ -47,6 +49,29 @@ export default function WeddingPage() {
     );
   }
 
+  // Check if the template has HTML content to render
+  const templateWithHtml = localTemplates.find(
+    (t) => t.id === site.templateId && t.htmlContent && t.htmlContent.trim().length > 0
+  );
+
+  // If template has HTML content, render it as a standalone page
+  if (templateWithHtml) {
+    const variableMap = buildVariableMap(site);
+    const renderedHtml = renderTemplateHtml(templateWithHtml.htmlContent!, variableMap, {
+      cleanUnknown: false,
+    });
+
+    return (
+      <div className="min-h-screen bg-white">
+        <div
+          className="template-content"
+          dangerouslySetInnerHTML={{ __html: renderedHtml }}
+        />
+      </div>
+    );
+  }
+
+  // Fallback: default hardcoded layout for templates without custom HTML
   const template = getTemplateById(site.templateId);
   const palette = template
     ? {
@@ -117,7 +142,7 @@ export default function WeddingPage() {
           >
             {site.coupleName1}
             <span className="block text-2xl sm:text-3xl my-3" style={{ color: palette.accent }}>
-              &
+              &amp;
             </span>
             {site.coupleName2}
           </h1>

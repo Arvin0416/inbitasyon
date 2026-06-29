@@ -1,5 +1,6 @@
 import { getSupabaseClient, isSupabaseConfigured } from "./supabase";
-import type { GeneratedSite, RSVPResponse, Order } from "./types";
+import type { GeneratedSite, RSVPResponse, Order, Template, TemplateMetaVarDefinition } from "./types";
+import { localTemplates, syncTemplates } from "./store";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -176,6 +177,238 @@ export async function listAllRSVPs(): Promise<{ data?: RSVPResponse[]; error?: s
   if (error) return { error: error.message };
 
   return { data: (data ?? []).map(toRSVP) };
+}
+
+// ─── Templates ────────────────────────────────────────────────────────────────
+
+export async function createTemplate(template: Template): Promise<{ error?: string }> {
+  if (!isSupabaseConfigured()) {
+    // In-memory only — save locally
+    localTemplates.push(template);
+    return {};
+  }
+
+  const supabase = getSupabaseClient()!;
+
+  const { error } = await supabase.from("templates").insert({
+    id: template.id,
+    name: template.name,
+    description: template.description,
+    style_tags: template.styleTags,
+    image_url: template.image,
+    preview_images: template.previewImages,
+    features: template.features,
+    primary_color: template.primaryColor,
+    secondary_color: template.secondaryColor,
+    accent_color: template.accentColor,
+    font_family: template.fontFamily,
+    html_content: template.htmlContent ?? "",
+  } as any);    if (error) return { error: error.message };
+
+  // Save metadata definitions
+  if (template.metadataDefinitions && template.metadataDefinitions.length > 0) {
+    const defRows = template.metadataDefinitions.map((def) => ({
+      template_id: def.templateId,
+      key: def.key,
+      label: def.label,
+      type: def.type,
+      options: def.options ?? [],
+      default_value: def.defaultValue,
+      required: def.required,
+      placeholder: def.placeholder,
+      order: def.order,
+    }));
+    const { error: defsError } = await (supabase as any)
+      .from("template_metadata_definitions")
+      .insert(defRows);
+
+    if (defsError) return { error: defsError.message };
+  }
+
+  // Sync back to local store
+  await syncTemplates();
+  return {};
+}
+
+export async function updateTemplate(template: Template): Promise<{ error?: string }> {
+  if (!isSupabaseConfigured()) {
+    // Update in-memory
+    const idx = localTemplates.findIndex((t) => t.id === template.id);
+    if (idx >= 0) localTemplates[idx] = template;
+    return {};
+  }
+
+  const supabase = getSupabaseClient()!;
+
+  const { error } = await (supabase as any)
+    .from("templates")
+    .update({
+      name: template.name,
+      description: template.description,
+      style_tags: template.styleTags,
+      image_url: template.image,
+      preview_images: template.previewImages,
+      features: template.features,
+      primary_color: template.primaryColor,
+      secondary_color: template.secondaryColor,
+      accent_color: template.accentColor,
+      font_family: template.fontFamily,
+      html_content: template.htmlContent ?? "",
+    })
+    .eq("id", template.id);
+
+  if (error) return { error: error.message };
+
+  // Replace metadata definitions: delete all, then re-insert
+  await (supabase as any).from("template_metadata_definitions").delete().eq("template_id", template.id);
+
+  if (template.metadataDefinitions && template.metadataDefinitions.length > 0) {
+    const defRows = template.metadataDefinitions.map((def) => ({
+      template_id: def.templateId,
+      key: def.key,
+      label: def.label,
+      type: def.type,
+      options: def.options ?? [],
+      default_value: def.defaultValue,
+      required: def.required,
+      placeholder: def.placeholder,
+      order: def.order,
+    }));
+    const { error: defsError } = await (supabase as any)
+      .from("template_metadata_definitions")
+      .insert(defRows);
+
+    if (defsError) return { error: defsError.message };
+  }
+
+  await syncTemplates();
+  return {};
+}
+
+export async function deleteTemplate(id: string): Promise<{ error?: string }> {
+  if (!isSupabaseConfigured()) {
+    const idx = localTemplates.findIndex((t) => t.id === id);
+    if (idx >= 0) localTemplates.splice(idx, 1);
+    return {};
+  }
+
+  const supabase = getSupabaseClient()!;
+
+  // Delete metadata definitions first (cascade should handle it, but explicit is safer)
+  await (supabase as any).from("template_metadata_definitions").delete().eq("template_id", id);
+
+  const { error } = await (supabase as any).from("templates").delete().eq("id", id);
+
+  if (error) return { error: error.message };
+
+  await syncTemplates();
+  return {};
+}
+
+export async function listAllTemplates(): Promise<{ data?: Template[]; error?: string }> {
+  if (!isSupabaseConfigured()) return { data: [...localTemplates] };
+
+  const supabase = getSupabaseClient()!;
+
+  const { data, error } = await supabase
+    .from("templates")
+    .select("*")
+    .order("created_at", { ascending: false }) as any;
+
+  if (error) return { error: error.message };
+
+  // Fetch metadata definitions for all templates
+  const templateRows: Template[] = (data ?? []).map((row: any) => toTemplate(row));
+
+  // Fetch definitions for each (in parallel for performance)
+  const defsResults = await Promise.all(
+    templateRows.map((t) => getMetadataDefinitions(t.id))
+  );
+  for (let i = 0; i < templateRows.length; i++) {
+    templateRows[i].metadataDefinitions = defsResults[i].data;
+  }
+
+  return { data: templateRows };
+}
+
+export async function getMetadataDefinitions(templateId: string): Promise<{
+  data?: TemplateMetaVarDefinition[];
+  error?: string;
+}> {
+  if (!isSupabaseConfigured()) return { data: [] };
+
+  const supabase = getSupabaseClient()!;
+
+  const { data, error } = await supabase
+    .from("template_metadata_definitions")
+    .select("*")
+    .eq("template_id", templateId)
+    .order("order", { ascending: true }) as any;
+
+  if (error) return { error: error.message };
+
+  return {
+    data: (data ?? []).map(toMetaDef),
+  };
+}
+
+export async function fetchTemplateById(id: string): Promise<{
+  data?: Template;
+  error?: string;
+}> {
+  if (!isSupabaseConfigured()) {
+    const t = localTemplates.find((t) => t.id === id);
+    return { data: t };
+  }
+
+  const supabase = getSupabaseClient()!;
+
+  const { data, error } = await supabase
+    .from("templates")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle() as any;
+
+  if (error) return { error: error.message };
+  if (!data) return { error: "Template not found" };
+
+  // Also fetch metadata definitions
+  const { data: defs } = await getMetadataDefinitions(id);
+
+  return { data: toTemplate(data, defs) };
+}
+
+function toTemplate(row: any, defs?: TemplateMetaVarDefinition[]): Template {
+  return {
+    id: row.id,
+    name: row.name,
+    description: row.description ?? "",
+    styleTags: row.style_tags ?? [],
+    image: row.image_url ?? "",
+    previewImages: row.preview_images ?? [],
+    features: row.features ?? [],
+    primaryColor: row.primary_color ?? "#E8B4B4",
+    secondaryColor: row.secondary_color ?? "#FFF8F0",
+    accentColor: row.accent_color ?? "#D4AF37",
+    fontFamily: row.font_family ?? "Playfair Display",
+    htmlContent: row.html_content ?? "",
+    metadataDefinitions: defs,
+  };
+}
+
+function toMetaDef(row: any): TemplateMetaVarDefinition {
+  return {
+    id: row.id,
+    templateId: row.template_id,
+    key: row.key,
+    label: row.label,
+    type: row.type,
+    options: row.options ?? [],
+    defaultValue: row.default_value ?? "",
+    required: row.required ?? false,
+    placeholder: row.placeholder ?? "",
+    order: row.order ?? 0,
+  };
 }
 
 // ─── Orders ──────────────────────────────────────────────────────────────────

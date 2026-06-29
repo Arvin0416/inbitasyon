@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, Suspense } from "react";
+import { useState, useCallback, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { templates } from "@/data/templates";
-import { COLOR_PALETTES, PRICING, GeneratedSite } from "@/lib/types";
+import { localTemplates } from "@/lib/store";
+import { COLOR_PALETTES, PRICING, GeneratedSite, TemplateMetaVarDefinition } from "@/lib/types";
+import { getMetadataDefinitions } from "@/lib/supabase-service";
 import { generateSlug } from "@/lib/utils";
 import { saveSite, db } from "@/lib/store";
 import { toast } from "sonner";
@@ -21,6 +23,7 @@ import {
   Lock,
   ChevronLeft,
   ChevronRight,
+  FileText,
 } from "lucide-react";
 
 const STEPS = ["Your Details", "Wedding Info", "Design & Style", "Payment"];
@@ -60,6 +63,10 @@ function OrderFormContent() {
     templateId: initialTemplate,
   });
 
+  // Template metadata definitions
+  const [metadataDefs, setMetadataDefs] = useState<TemplateMetaVarDefinition[]>([]);
+  const [templateVariables, setTemplateVariables] = useState<Record<string, string>>({});
+
   const [slugEdited, setSlugEdited] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [completed, setCompleted] = useState(false);
@@ -92,6 +99,39 @@ function OrderFormContent() {
     }));
   };
 
+  // Load metadata definitions when template is selected
+  useEffect(() => {
+    const templateId = formData.templateId || initialTemplate;
+    if (!templateId) return;
+
+    const loadDefs = async () => {
+      // Check local templates first
+      const local = localTemplates.find((t) => t.id === templateId);
+      if (local?.metadataDefinitions && local.metadataDefinitions.length > 0) {
+        setMetadataDefs(local.metadataDefinitions);
+        // Initialize default values
+        const defaults: Record<string, string> = {};
+        for (const def of local.metadataDefinitions) {
+          defaults[def.key] = def.defaultValue || "";
+        }
+        setTemplateVariables((prev) => ({ ...defaults, ...prev }));
+        return;
+      }
+
+      // Fallback to Supabase
+      const { data } = await getMetadataDefinitions(templateId);
+      if (data && data.length > 0) {
+        setMetadataDefs(data);
+        const defaults: Record<string, string> = {};
+        for (const def of data) {
+          defaults[def.key] = def.defaultValue || "";
+        }
+        setTemplateVariables((prev) => ({ ...defaults, ...prev }));
+      }
+    };
+    loadDefs();
+  }, [formData.templateId, initialTemplate]);
+
   const isStepValid = () => {
     switch (step) {
       case 0:
@@ -104,7 +144,11 @@ function OrderFormContent() {
       case 1:
         return formData.weddingDate && formData.weddingTime && formData.venueName;
       case 2:
-        return formData.colorPalette && formData.slug.length >= 3;
+        // Check that required metadata variables are filled
+        const requiredFilled = metadataDefs
+          .filter((d) => d.required)
+          .every((d) => templateVariables[d.key]?.trim());
+        return (formData.colorPalette && formData.slug.length >= 3) && requiredFilled;
       case 3:
         return true;
       default:
@@ -138,6 +182,7 @@ function OrderFormContent() {
       tier,
       status: "active",
       createdAt: new Date().toISOString(),
+      templateVariables: Object.keys(templateVariables).length > 0 ? templateVariables : undefined,
     };
     await saveSite(newSite);
 
@@ -425,6 +470,106 @@ function OrderFormContent() {
                       ))}
                     </div>
                   </div>
+
+                  {/* Template Metadata Variables */}
+                  {metadataDefs.length > 0 && (
+                    <div className="space-y-4 p-4 bg-cream-50 rounded-xl border border-olive-200">
+                      <div className="flex items-center gap-2">
+                        <FileText className="w-4 h-4 text-olive-600" />
+                        <h3 className="text-sm font-semibold text-olive-700">
+                          Template Custom Fields
+                        </h3>
+                      </div>
+                      <p className="text-xs text-charcoal-500">
+                        These fields are defined by the template design.
+                      </p>
+                      {metadataDefs.map((def) => (
+                        <div key={def.key} className="space-y-1.5">
+                          <Label htmlFor={`var-${def.key}`} className="text-xs">
+                            {def.label}
+                            {def.required && <span className="text-red-400 ml-0.5">*</span>}
+                          </Label>
+                          {def.type === "textarea" ? (
+                            <Textarea
+                              id={`var-${def.key}`}
+                              value={templateVariables[def.key] || ""}
+                              onChange={(e) =>
+                                setTemplateVariables((prev) => ({
+                                  ...prev,
+                                  [def.key]: e.target.value,
+                                }))
+                              }
+                              placeholder={def.placeholder || `Enter ${def.label.toLowerCase()}`}
+                              rows={3}
+                            />
+                          ) : def.type === "select" ? (
+                            <select
+                              id={`var-${def.key}`}
+                              value={templateVariables[def.key] || ""}
+                              onChange={(e) =>
+                                setTemplateVariables((prev) => ({
+                                  ...prev,
+                                  [def.key]: e.target.value,
+                                }))
+                              }
+                              className="flex h-11 w-full rounded-xl border border-warm-200 bg-white px-4 py-2 text-sm text-navy-800 focus:outline-none focus:ring-2 focus:ring-rosegold-400"
+                            >
+                              <option value="">Select {def.label.toLowerCase()}...</option>
+                              {(def.options ?? []).map((opt) => (
+                                <option key={opt} value={opt}>
+                                  {opt}
+                                </option>
+                              ))}
+                            </select>
+                          ) : def.type === "color" ? (
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="color"
+                                id={`var-${def.key}`}
+                                value={templateVariables[def.key] || def.defaultValue || "#000000"}
+                                onChange={(e) =>
+                                  setTemplateVariables((prev) => ({
+                                    ...prev,
+                                    [def.key]: e.target.value,
+                                  }))
+                                }
+                                className="w-10 h-10 rounded-lg border border-olive-200 cursor-pointer"
+                              />
+                              <span className="text-xs text-charcoal-500">
+                                {templateVariables[def.key] || def.defaultValue || "Select a color"}
+                              </span>
+                            </div>
+                          ) : def.type === "number" ? (
+                            <Input
+                              id={`var-${def.key}`}
+                              type="number"
+                              value={templateVariables[def.key] || ""}
+                              onChange={(e) =>
+                                setTemplateVariables((prev) => ({
+                                  ...prev,
+                                  [def.key]: e.target.value,
+                                }))
+                              }
+                              placeholder={def.placeholder || `Enter ${def.label.toLowerCase()}`}
+                            />
+                          ) : (
+                            <Input
+                              id={`var-${def.key}`}
+                              type={def.type === "date" ? "date" : def.type === "time" ? "time" : def.type === "email" ? "email" : "text"}
+                              value={templateVariables[def.key] || ""}
+                              onChange={(e) =>
+                                setTemplateVariables((prev) => ({
+                                  ...prev,
+                                  [def.key]: e.target.value,
+                                }))
+                              }
+                              placeholder={def.placeholder || `Enter ${def.label.toLowerCase()}`}
+                            />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
 
                   <div className="space-y-2">
                     <Label htmlFor="notes">Personal message (optional)</Label>
