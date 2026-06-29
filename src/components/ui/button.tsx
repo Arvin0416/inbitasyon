@@ -8,16 +8,16 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-rosegold-500 text-white hover:bg-rosegold-600 shadow-sm hover:shadow-md",
+          "bg-olive-600 text-white hover:bg-olive-700 shadow-sm hover:shadow-md",
         secondary:
-          "bg-cream-50 text-rosegold-800 border border-rosegold-200 hover:bg-cream-100 hover:border-rosegold-300",
+          "bg-cream-100 text-olive-800 border border-olive-300 hover:bg-cream-200 hover:border-olive-400",
         outline:
-          "border border-sage-300 bg-white text-sage-800 hover:bg-sage-50",
+          "border border-olive-300 bg-white text-olive-800 hover:bg-olive-50",
         ghost:
-          "text-warm-600 hover:bg-warm-100 hover:text-warm-800",
-        navy:
-          "bg-navy-700 text-white hover:bg-navy-800 shadow-sm",
-        gold: "bg-gold-500 text-white hover:bg-gold-600 shadow-sm",
+          "text-charcoal-500 hover:bg-olive-50 hover:text-olive-800",
+        olive:
+          "bg-olive-800 text-white hover:bg-olive-900 shadow-sm",
+        gold: "bg-gold-400 text-white hover:bg-gold-500 shadow-sm",
       },
       size: {
         default: "h-10 px-6 py-2",

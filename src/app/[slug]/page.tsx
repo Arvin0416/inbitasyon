@@ -6,7 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { db } from "@/lib/store";
 import { getTemplateById } from "@/data/templates";
+import { localTemplates } from "@/lib/store";
 import { formatDate, formatTime } from "@/lib/utils";
+import { buildVariableMap, renderTemplateHtml } from "@/lib/template-renderer";
 import {
   Calendar,
   Clock,
@@ -31,11 +33,11 @@ export default function WeddingPage() {
       <div className="flex flex-col items-center justify-center min-h-[60vh] px-4">
         <Card className="max-w-md w-full text-center">
           <CardContent className="p-8 sm:p-12">
-            <Heart className="w-12 h-12 text-rosegold-300 mx-auto mb-4" />
-            <h1 className="font-serif text-2xl font-bold text-navy-800 mb-2">
+            <Heart className="w-12 h-12 text-olive-300 mx-auto mb-4" />
+            <h1 className="font-serif text-2xl font-bold text-olive-800 mb-2">
               Wedding website not found
             </h1>
-            <p className="text-warm-500 mb-6">
+            <p className="text-charcoal-500 mb-6">
               This wedding website doesn&apos;t exist yet or has been removed.
             </p>
             <Link href="/">
@@ -47,6 +49,29 @@ export default function WeddingPage() {
     );
   }
 
+  // Check if the template has HTML content to render
+  const templateWithHtml = localTemplates.find(
+    (t) => t.id === site.templateId && t.htmlContent && t.htmlContent.trim().length > 0
+  );
+
+  // If template has HTML content, render it as a standalone page
+  if (templateWithHtml) {
+    const variableMap = buildVariableMap(site);
+    const renderedHtml = renderTemplateHtml(templateWithHtml.htmlContent!, variableMap, {
+      cleanUnknown: false,
+    });
+
+    return (
+      <div className="min-h-screen bg-white">
+        <div
+          className="template-content"
+          dangerouslySetInnerHTML={{ __html: renderedHtml }}
+        />
+      </div>
+    );
+  }
+
+  // Fallback: default hardcoded layout for templates without custom HTML
   const template = getTemplateById(site.templateId);
   const palette = template
     ? {
@@ -117,7 +142,7 @@ export default function WeddingPage() {
           >
             {site.coupleName1}
             <span className="block text-2xl sm:text-3xl my-3" style={{ color: palette.accent }}>
-              &
+              &amp;
             </span>
             {site.coupleName2}
           </h1>
@@ -145,8 +170,8 @@ export default function WeddingPage() {
                   className="w-6 h-6 mx-auto mb-3"
                   style={{ color: palette.primary }}
                 />
-                <p className="text-sm text-warm-500 mb-1">Date</p>
-                <p className="font-semibold text-navy-800">
+                <p className="text-sm text-charcoal-500 mb-1">Date</p>
+                <p className="font-semibold text-olive-800">
                   {formatDate(site.weddingDate)}
                 </p>
               </CardContent>
@@ -157,8 +182,8 @@ export default function WeddingPage() {
                   className="w-6 h-6 mx-auto mb-3"
                   style={{ color: palette.primary }}
                 />
-                <p className="text-sm text-warm-500 mb-1">Time</p>
-                <p className="font-semibold text-navy-800">
+                <p className="text-sm text-charcoal-500 mb-1">Time</p>
+                <p className="font-semibold text-olive-800">
                   {formatTime(site.weddingTime)}
                 </p>
               </CardContent>
@@ -174,11 +199,11 @@ export default function WeddingPage() {
                   style={{ color: palette.primary }}
                 />
                 <div>
-                  <p className="font-semibold text-navy-800 text-lg">
+                  <p className="font-semibold text-olive-800 text-lg">
                     {site.venueName}
                   </p>
                   {site.venueAddress && (
-                    <p className="text-warm-500 mt-1">{site.venueAddress}</p>
+                    <p className="text-charcoal-500 mt-1">{site.venueAddress}</p>
                   )}
                 </div>
               </div>
@@ -195,10 +220,10 @@ export default function WeddingPage() {
                     style={{ color: palette.primary }}
                   />
                   <div>
-                    <p className="font-semibold text-navy-800 mb-1">
+                    <p className="font-semibold text-olive-800 mb-1">
                       A message from the couple
                     </p>
-                    <p className="text-warm-600 italic">{site.notes}</p>
+                    <p className="text-charcoal-600 italic">{site.notes}</p>
                   </div>
                 </div>
               </CardContent>
@@ -231,7 +256,7 @@ export default function WeddingPage() {
         style={{ backgroundColor: palette.secondary }}
       >
         <div className="mx-auto max-w-md">
-          <h3 className="font-semibold text-navy-800 mb-4">Share this invitation</h3>
+          <h3 className="font-semibold text-olive-800 mb-4">Share this invitation</h3>
           <div className="flex items-center justify-center gap-4">
             <button
               onClick={shareWhatsApp}
@@ -253,7 +278,7 @@ export default function WeddingPage() {
             </button>
             <button
               onClick={copyLink}
-              className="w-12 h-12 rounded-full bg-navy-700 text-white flex items-center justify-center hover:bg-navy-800 transition-colors shadow-sm"
+              className="w-12 h-12 rounded-full bg-olive-700 text-white flex items-center justify-center hover:bg-olive-800 transition-colors shadow-sm"
               aria-label="Copy link"
             >
               {linkCopied ? (
@@ -268,11 +293,11 @@ export default function WeddingPage() {
 
       {/* Footer */}
       <section className="px-4 py-8 text-center">
-        <p className="text-sm text-warm-400">
+        <p className="text-sm text-charcoal-400">
           Created with{" "}
           <Heart className="w-3 h-3 inline" style={{ color: palette.primary }} />{" "}
           at{" "}
-          <Link href="/" className="underline hover:text-rosegold-600 transition-colors">
+          <Link href="/" className="underline hover:text-olive-700 transition-colors">
             Invitasyon
           </Link>
         </p>

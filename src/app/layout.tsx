@@ -3,6 +3,9 @@ import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { FloatingParticles, CursorGlow } from "@/components/FloatingParticles";
+import { SmoothScrollProvider } from "@/components/SmoothScroll";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import { Toaster } from "sonner";
 
 const inter = Inter({
@@ -16,15 +19,34 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Invitasyon — Beautiful Wedding Websites in Minutes",
+  title: "Imbitasyon — Beautiful Wedding Websites in Minutes",
   description:
     "Create a beautiful wedding invitation website with RSVP in minutes. Choose a romantic design, add your details, and share your personal wedding URL.",
+  icons: {
+    icon: "/Icon-imbitasyon.svg",
+    shortcut: "/Icon-imbitasyon.svg",
+  },
   openGraph: {
-    title: "Invitasyon — Beautiful Wedding Websites in Minutes",
+    title: "Imbitasyon — Beautiful Wedding Websites in Minutes",
     description:
       "Create a beautiful wedding invitation website with RSVP in minutes.",
-    siteName: "Invitasyon",
+    siteName: "Imbitasyon",
     type: "website",
+    images: [
+      {
+        url: "/Icon-imbitasyon.svg",
+        width: 360,
+        height: 360,
+        alt: "Imbitasyon — Wedding Invitation Websites",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Imbitasyon — Beautiful Wedding Websites in Minutes",
+    description:
+      "Create a beautiful wedding invitation website with RSVP in minutes.",
+    images: ["/Icon-imbitasyon.svg"],
   },
 };
 
@@ -36,18 +58,30 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${inter.variable} ${playfair.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <SmoothScrollProvider>
+            <FloatingParticles />
+            <CursorGlow />
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </SmoothScrollProvider>
+        </ThemeProvider>
         <Toaster
           position="top-center"
           toastOptions={{
             style: {
               borderRadius: "12px",
-              background: "#1B2A4A",
+              background: "#283618",
               color: "#fff",
             },
           }}

@@ -1,5 +1,5 @@
 // Data store: sync in-memory for instant access + async Supabase backup
-import { GeneratedSite, RSVPResponse, Order } from "./types";
+import { GeneratedSite, RSVPResponse, Order, Template, TemplateMetaVarDefinition } from "./types";
 import { isSupabaseConfigured } from "./supabase";
 import {
   createSite,
@@ -16,6 +16,32 @@ import {
 const inMemorySites = new Map<string, GeneratedSite>();
 const inMemoryRsvps = new Map<string, RSVPResponse[]>();
 const inMemoryOrders = new Map<string, Order[]>();
+
+// ─── Templates (in-memory, sync with Supabase) ──────────────────────────────
+export const localTemplates: Template[] = [];
+
+// Import the local template data for seeding
+import { templates as seedTemplates } from "@/data/templates";
+
+// Seed local templates from the hardcoded data on first load
+(function seedLocalTemplates() {
+  if (localTemplates.length === 0) {
+    for (const t of seedTemplates) {
+      localTemplates.push({ ...t, htmlContent: "" });
+    }
+  }
+})();
+
+export async function syncTemplates(): Promise<void> {
+  if (isSupabaseConfigured()) {
+    const { listAllTemplates } = await import("./supabase-service");
+    const { data } = await listAllTemplates();
+    if (data) {
+      localTemplates.length = 0;
+      localTemplates.push(...data);
+    }
+  }
+}
 
 // ─── Synchronous (in-memory) access for pages ───────────────────────────────
 

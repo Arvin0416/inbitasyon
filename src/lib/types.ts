@@ -1,3 +1,16 @@
+export interface TemplateMetaVarDefinition {
+  id: string;
+  templateId: string;
+  key: string;
+  label: string;
+  type: 'text' | 'date' | 'time' | 'color' | 'textarea' | 'image' | 'email' | 'select' | 'number';
+  options?: string[];
+  defaultValue: string;
+  required: boolean;
+  placeholder: string;
+  order: number;
+}
+
 export interface Template {
   id: string;
   name: string;
@@ -10,6 +23,8 @@ export interface Template {
   secondaryColor: string;
   accentColor: string;
   fontFamily: string;
+  htmlContent?: string;
+  metadataDefinitions?: TemplateMetaVarDefinition[];
 }
 
 export interface OrderFormData {
@@ -45,6 +60,7 @@ export interface GeneratedSite {
   tier: "self-serve" | "custom";
   status: "active" | "inactive";
   createdAt: string;
+  templateVariables?: Record<string, string>;
 }
 
 export interface RSVPResponse {

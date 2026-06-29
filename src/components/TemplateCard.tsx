@@ -14,7 +14,7 @@ interface TemplateCardProps {
 export function TemplateCard({ template }: TemplateCardProps) {
   return (
     <Card className="group overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-      <div className="relative aspect-[3/4] overflow-hidden bg-warm-100">
+      <div className="relative aspect-[3/4] overflow-hidden bg-olive-100">
         <div
           className="absolute inset-0 flex items-center justify-center transition-transform duration-500 group-hover:scale-105"
           style={{
@@ -56,13 +56,13 @@ export function TemplateCard({ template }: TemplateCardProps) {
       <CardContent className="p-4">
         <div className="flex items-start justify-between gap-2 mb-2">
           <h3
-            className="text-lg font-semibold text-navy-800"
+            className="text-lg font-semibold text-olive-800"
             style={{ fontFamily: template.fontFamily }}
           >
             {template.name}
           </h3>
         </div>
-        <p className="text-sm text-warm-500 mb-3 line-clamp-2">
+        <p className="text-sm text-charcoal-500 mb-3 line-clamp-2">
           {template.description}
         </p>
         <div className="flex flex-wrap gap-1.5 mb-4">
