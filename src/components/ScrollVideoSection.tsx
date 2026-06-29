@@ -130,25 +130,41 @@ export function ScrollVideoSection() {
     });
   }
 
+  const mountCountRef = useRef(0);
+  const debug = (...args: unknown[]) => {
+    console.log("[GSAP ScrollVideo]", ...args);
+  };
+
   // useGSAP handles GSAP/ScrollTrigger lifecycle including StrictMode cleanup
   // No manual guard ref needed — useGSAP's context automatically reverts
   // ScrollTriggers on unmount/cleanup, so the callback creates a fresh one each time.
   useGSAP(() => {
+    mountCountRef.current += 1;
+    const mountId = mountCountRef.current;
+    debug(`useGSAP callback fired (mount #${mountId})`);
+
     const video = videoRef.current;
     const container = containerRef.current;
-    if (!video || !container) return;
+    if (!video || !container) {
+      debug("ABORT: video or container ref is null", { video: !!video, container: !!container });
+      return;
+    }
 
     // Check for prefers-reduced-motion
     const prefersReduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
     if (prefersReduced) {
+      debug("prefers-reduced-motion detected — skipping ScrollTrigger, showing first frame");
       setVideoReady(true);
       return;
     }
 
+    let scrollTriggerInstance: ScrollTrigger | null = null;
+
     function setupScrollTrigger() {
-      ScrollTrigger.create({
+      debug("Creating ScrollTrigger — pinning container, scrub duration 3000px");
+      scrollTriggerInstance = ScrollTrigger.create({
         trigger: container,
         start: "top top",
         end: "+=3000",
@@ -172,18 +188,33 @@ export function ScrollVideoSection() {
         },
       });
 
+      debug("ScrollTrigger created successfully", {
+        start: scrollTriggerInstance.start,
+        end: scrollTriggerInstance.end,
+        pinned: true,
+      });
+
       // Show first frame
       if (videoRef.current) {
-        videoRef.current.currentTime = 0.01;
+        const vidEl = videoRef.current;
+        vidEl.currentTime = 0.01;
+        debug("Video currentTime set to 0.01 (first frame)");
       }
       setVideoReady(true);
+      debug("setVideoReady(true) — loading overlay should fade out");
     }
 
-    function onVideoReady() {
+    function onVideoReady(event?: Event) {
+      debug("onVideoReady fired", {
+        eventType: event?.type ?? "polling",
+        readyState: vid.readyState,
+        duration: vid.duration,
+      });
       // Clear polling if any
       if (pollRef.current) {
         clearInterval(pollRef.current);
         pollRef.current = null;
+        debug("Polling interval cleared");
       }
       setupScrollTrigger();
     }
@@ -192,9 +223,12 @@ export function ScrollVideoSection() {
 
     // Option A: Already loaded
     if (vid.readyState >= 2) {
+      debug(`Video already loaded (readyState=${vid.readyState}, duration=${vid.duration}) — calling setupScrollTrigger immediately`);
       setupScrollTrigger();
       return;
     }
+
+    debug(`Video not yet loaded (readyState=${vid.readyState}) — attaching load event listeners and starting polling`);
 
     // Option B: Wait for load events
     vid.addEventListener("loadeddata", onVideoReady, { once: true });
@@ -203,6 +237,7 @@ export function ScrollVideoSection() {
     // Option C: Polling fallback (catches edge cases)
     pollRef.current = setInterval(() => {
       if (vid.readyState >= 2) {
+        debug(`Polling found readyState=${vid.readyState} — triggering setup`);
         if (pollRef.current) {
           clearInterval(pollRef.current);
           pollRef.current = null;
@@ -210,15 +245,21 @@ export function ScrollVideoSection() {
         onVideoReady();
       }
     }, 200);
+    debug("Polling interval started (200ms interval)");
 
     // Cleanup on unmount/StrictMode reversion
     return () => {
+      debug(`Cleanup (mount #${mountId}) — killing ScrollTrigger, clearing listeners & polling`);
       if (pollRef.current) {
         clearInterval(pollRef.current);
         pollRef.current = null;
       }
       vid.removeEventListener("loadeddata", onVideoReady);
       vid.removeEventListener("canplaythrough", onVideoReady);
+      if (scrollTriggerInstance) {
+        scrollTriggerInstance.kill();
+        debug("ScrollTrigger.kill() called");
+      }
     };
   }, { scope: containerRef });
 
